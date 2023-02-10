@@ -9,9 +9,9 @@
           <div class="log-in-field">
             <label class="label-text">ชื่อผู้ใช้</label>
             <v-text-field
-              rounded
-              filled
-              dense
+              bg-color="lightWhite"
+              density="compact"
+              variant="solo"
               v-model="user.username"
               :rules="usernameRules"
             />
@@ -19,9 +19,9 @@
           <div class="log-in-field">
             <label class="label-text">อีเมล</label>
             <v-text-field
-              rounded
-              filled
-              dense
+              bg-color="lightWhite"
+              density="compact"
+              variant="solo"
               v-model.trim="user.email"
               :rules="emailRules"
             />
@@ -29,9 +29,9 @@
           <div class="log-in-field">
             <label class="label-text">ชื่อ</label>
             <v-text-field
-              rounded
-              filled
-              dense
+              bg-color="lightWhite"
+              density="compact"
+              variant="solo"
               v-model.trim="user.firstName"
               :rules="nameRules"
             />
@@ -39,9 +39,9 @@
           <div class="log-in-field">
             <label class="label-text">นามสกุล</label>
             <v-text-field
-              rounded
-              filled
-              dense
+              bg-color="lightWhite"
+              density="compact"
+              variant="solo"
               v-model.trim="user.lastName"
               :rules="nameRules"
             />
@@ -54,9 +54,9 @@
             <v-text-field
               :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
               :type="showPassword ? 'text' : 'password'"
-              rounded
-              filled
-              dense
+              bg-color="lightWhite"
+              density="compact"
+              variant="solo"
               v-model="currentPassword"
               :rules="currentPasswordRules"
               @click:append-inner="toggleShowPassword"
@@ -67,9 +67,9 @@
             <v-text-field
               :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
               :type="showPassword ? 'text' : 'password'"
-              rounded
-              filled
-              dense
+              bg-color="lightWhite"
+              density="compact"
+              variant="solo"
               v-model="newPassword"
               :rules="passwordRules"
               @click:append-inner="toggleShowPassword"
@@ -80,9 +80,9 @@
             <v-text-field
               :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
               :type="showPassword ? 'text' : 'password'"
-              rounded
-              filled
-              dense
+              bg-color="lightWhite"
+              density="compact"
+              variant="solo"
               v-model="confirmNewPassword"
               :rules="confirmPasswordRules"
               @click:append-inner="toggleShowPassword"
@@ -176,17 +176,17 @@ export default {
           (v && v.length >= 5) || "ชื่อผู้ใช้ต้องมีความยาวอย่างน้อย 5 ตัวอักษร",
       ],
       currentPasswordRules: [
-        (v) => !!v || "กรุณากรอกรหัสผ่าน",
+        (v) => !!v || "กรุณากรอกรหัสผ่านเดิม",
         (v) =>
-          (v && v.length >= 6) || "รหัสผ่านต้องมีความยาวอย่างน้อย 6 ตัวอักษร",
+          (v && v.length >= 8) || "รหัสผ่านต้องมีความยาวอย่างน้อย 8 ตัวอักษร",
       ],
       passwordRules: [
-        (v) => !!v || "กรุณากรอกรหัสผ่าน",
+        (v) => !!v || "กรุณากรอกรหัสผ่านใหม่",
         (v) =>
-          (v && v.length >= 6) || "รหัสผ่านต้องมีความยาวอย่างน้อย 6 ตัวอักษร",
+          (v && v.length >= 8) || "รหัสผ่านต้องมีความยาวอย่างน้อย 8 ตัวอักษร",
       ],
       confirmPasswordRules: [
-        (v) => !!v || "กรุณายืนยันรหัสผ่าน",
+        (v) => !!v || "กรุณายืนยันรหัสผ่านใหม่",
         (v) => v === this.newPassword || "ยืนยันรหัสผ่านไม่ถูกต้อง",
       ],
     };
@@ -210,7 +210,7 @@ export default {
         username: this.user.username,
       };
       await updateUserFirebase(this.userId, newData);
-      alert("update user account successfully");
+      alert("แก้ไขข้อมูลส่วนตัวสำเร็จ");
       this.$router.push("/about");
       this.resetForm();
     },
@@ -222,7 +222,7 @@ export default {
         password: encryptPassword,
       };
       await updateUserFirebase(this.userId, newData);
-      alert("update password successfully");
+      alert("เปลี่ยนรหัสผ่านใหม่สำเร็จ");
       this.$router.push("/about");
       this.resetForm();
     },
@@ -233,11 +233,15 @@ export default {
         if (this.selectedMenu === "editAccount") {
           this.updateAccount();
         } else {
-          if (this.currentPassword === this.user.password) {
-            this.updatePassword();
-          } else {
+          if (this.currentPassword !== this.user.password) {
             alert("รหัสผ่านเดิมไม่ถูกต้อง");
             this.currentPassword = "";
+          } else if (this.newPassword === this.user.password) {
+            alert("กรุณากรอกรหัสผ่านใหม่");
+            this.newPassword = "";
+            this.confirmNewPassword = "";
+          } else {
+            this.updatePassword();
           }
         }
       }
@@ -289,14 +293,6 @@ export default {
   font-size: 16px;
   line-height: 26px;
   color: #f1f1f1;
-}
-
-input {
-  border-radius: 40px !important;
-  background-color: #f1f1f1 !important;
-}
-.v-text-field {
-  color: black;
 }
 
 .btn {

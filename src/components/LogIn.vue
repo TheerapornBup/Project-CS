@@ -7,9 +7,9 @@
           <label class="label-text">ชื่อผู้ใช้/อีเมล</label>
           <v-text-field
             prepend-inner-icon="mdi-account"
-            rounded
-            filled
-            dense
+            bg-color="lightWhite"
+            density="compact"
+            variant="solo"
             v-model="username"
             :rules="usernameRules"
           />
@@ -20,12 +20,12 @@
             prepend-inner-icon="mdi-lock"
             :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
             :type="showPassword ? 'text' : 'password'"
-            rounded
-            filled
-            dense
+            @click:append-inner="toggleShowPassword"
+            bg-color="lightWhite"
+            density="compact"
+            variant="solo"
             v-model="password"
             :rules="passwordRules"
-            @click:append-inner="toggleShowPassword"
           />
         </div>
         <div class="log-in-field">
@@ -73,7 +73,7 @@ export default {
       passwordRules: [
         (v) => !!v || "กรุณากรอกรหัสผ่าน",
         (v) =>
-          (v && v.length >= 6) || "รหัสผ่านต้องมีความยาวอย่างน้อย 6 ตัวอักษร",
+          (v && v.length >= 8) || "รหัสผ่านต้องมีความยาวอย่างน้อย 8 ตัวอักษร",
       ],
     };
   },
@@ -115,6 +115,12 @@ export default {
 </script>
 
 <style scopes>
+.v-field {
+  border-radius: 40px;
+}
+.v-text-field {
+  color: black;
+}
 .title {
   font-family: "Playfair Display";
   font-style: normal;
@@ -140,11 +146,6 @@ export default {
   font-weight: 400;
   font-size: 16px;
   line-height: 26px;
-}
-
-input {
-  border-radius: 40px !important;
-  background-color: #f1f1f1 !important;
 }
 
 .btn {

@@ -7,9 +7,9 @@
           <div class="log-in-field">
             <label class="label-text">ชื่อ</label>
             <v-text-field
-              rounded
-              filled
-              dense
+              bg-color="lightWhite"
+              density="compact"
+              variant="solo"
               v-model.trim="firstName"
               :rules="nameRules"
             />
@@ -17,9 +17,9 @@
           <div class="log-in-field">
             <label class="label-text">นามสกุล</label>
             <v-text-field
-              rounded
-              filled
-              dense
+              bg-color="lightWhite"
+              density="compact"
+              variant="solo"
               v-model.trim="lastName"
               :rules="nameRules"
             />
@@ -28,9 +28,9 @@
             <label class="label-text">อีเมล</label>
             <v-text-field
               type="email"
-              rounded
-              filled
-              dense
+              bg-color="lightWhite"
+              density="compact"
+              variant="solo"
               v-model.trim="email"
               :rules="emailRules"
             />
@@ -43,9 +43,9 @@
           <div class="log-in-field">
             <label class="label-text">ชื่อผู้ใช้</label>
             <v-text-field
-              rounded
-              filled
-              dense
+              bg-color="lightWhite"
+              density="compact"
+              variant="solo"
               v-model.trim="username"
               :rules="usernameRules"
             />
@@ -56,9 +56,9 @@
               :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
               :type="showPassword ? 'text' : 'password'"
               @click:append-inner="toggleShowPassword"
-              rounded
-              filled
-              dense
+              bg-color="lightWhite"
+              density="compact"
+              variant="solo"
               v-model.trim="password"
               :rules="passwordRules"
             />
@@ -69,9 +69,9 @@
               :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
               :type="showPassword ? 'text' : 'password'"
               @click:append-inner="toggleShowPassword"
-              rounded
-              filled
-              dense
+              bg-color="lightWhite"
+              density="compact"
+              variant="solo"
               v-model.trim="confirmPassword"
               :rules="confirmPasswordRules"
             />
@@ -80,16 +80,11 @@
 
         <div class="log-in-field">
           <v-checkbox
+            class="checkbox-text"
             v-model="isAgree"
             :label="`ฉันได้อ่าน และ อนุมัติ ข้อกำหนดในการให้บริการและนโยบายความเป็นส่วนตัวแล้ว`"
-            :rules="[
-              (v) =>
-                !!v ||
-                'คุณต้องอนุมัติข้อกำหนดในการให้บริการและนโยบายความเป็นส่วนตัวแล้ว',
-              (v) =>
-                v ||
-                'คุณต้องอนุมัติข้อกำหนดในการให้บริการและนโยบายความเป็นส่วนตัวแล้ว',
-            ]"
+            density="compact"
+            :rules="checkboxRules"
           ></v-checkbox>
         </div>
         <div class="log-in-field log-in-group-field">
@@ -153,6 +148,11 @@ export default {
       confirmPasswordRules: [
         (v) => !!v || "กรุณายืนยันรหัสผ่าน",
         (v) => v === this.password || "ยืนยันรหัสผ่านไม่ถูกต้อง",
+      ],
+      checkboxRules: [
+        (v) =>
+          !!v ||
+          "คุณต้องอนุมัติข้อกำหนดในการให้บริการและนโยบายความเป็นส่วนตัวแล้ว",
       ],
     };
   },
@@ -233,14 +233,16 @@ export default {
   color: #f1f1f1;
 }
 
-.v-text-field {
-  height: 40px;
-  color: black;
+.checkbox-text {
+  font-family: "Noto Serif Thai";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 11px;
+  line-height: 18px;
 }
 
-input {
-  border-radius: 40px !important;
-  background-color: #f1f1f1 !important;
+.v-text-field {
+  height: 40px;
 }
 
 .btn {
