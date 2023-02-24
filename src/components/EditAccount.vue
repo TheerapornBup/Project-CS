@@ -1,13 +1,16 @@
 <template>
   <CardContent>
     <template v-slot:content-left>
+      <!-- account icon -->
       <v-icon class="icon-user" color="whiteCream" size="80"
         >mdi-account-circle</v-icon
       >
       <v-form class="log-in-form" ref="form">
+        <!-- edit account form -->
         <div v-if="selectedMenu === 'editAccount'">
+          <!-- username text field -->
           <div class="log-in-field">
-            <label class="label-text">ชื่อผู้ใช้</label>
+            <label class="h4-th">ชื่อผู้ใช้</label>
             <v-text-field
               bg-color="lightWhite"
               density="compact"
@@ -16,8 +19,10 @@
               :rules="usernameRules"
             />
           </div>
+
+          <!-- email text field -->
           <div class="log-in-field">
-            <label class="label-text">อีเมล</label>
+            <label class="h4-th">อีเมล</label>
             <v-text-field
               bg-color="lightWhite"
               density="compact"
@@ -26,8 +31,10 @@
               :rules="emailRules"
             />
           </div>
+
+          <!-- first name text field -->
           <div class="log-in-field">
-            <label class="label-text">ชื่อ</label>
+            <label class="h4-th">ชื่อ</label>
             <v-text-field
               bg-color="lightWhite"
               density="compact"
@@ -36,8 +43,10 @@
               :rules="nameRules"
             />
           </div>
+
+          <!-- last name text field -->
           <div class="log-in-field">
-            <label class="label-text">นามสกุล</label>
+            <label class="h4-th">นามสกุล</label>
             <v-text-field
               bg-color="lightWhite"
               density="compact"
@@ -48,9 +57,11 @@
           </div>
         </div>
 
+        <!-- change password form -->
         <div v-else>
+          <!-- current password text field -->
           <div class="log-in-field">
-            <label class="label-text">รหัสผ่านเดิม</label>
+            <label class="h4-th">รหัสผ่านเดิม</label>
             <v-text-field
               :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
               :type="showPassword ? 'text' : 'password'"
@@ -62,8 +73,10 @@
               @click:append-inner="toggleShowPassword"
             />
           </div>
+
+          <!-- new password text field -->
           <div class="log-in-field">
-            <label class="label-text">รหัสผ่านใหม่</label>
+            <label class="h4-th">รหัสผ่านใหม่</label>
             <v-text-field
               :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
               :type="showPassword ? 'text' : 'password'"
@@ -75,8 +88,10 @@
               @click:append-inner="toggleShowPassword"
             />
           </div>
+
+          <!-- confirm password text field -->
           <div class="log-in-field">
-            <label class="label-text">ยืนยันรหัสผ่านใหม่</label>
+            <label class="h4-th">ยืนยันรหัสผ่านใหม่</label>
             <v-text-field
               :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
               :type="showPassword ? 'text' : 'password'"
@@ -90,10 +105,11 @@
           </div>
         </div>
 
+        <!-- save button -->
         <v-row class="log-in-field">
           <v-col
             ><v-btn
-              class="bg-lightGreen text-black btn"
+              class="bg-lightGreen text-black btn h4-th"
               block
               rounded
               @click.prevent="validateForm"
@@ -101,9 +117,11 @@
               บันทึก
             </v-btn></v-col
           >
+
+          <!-- cancel button -->
           <v-col
             ><v-btn
-              class="bg-blueGreen text-black btn border-btn"
+              class="bg-blueGreen text-black btn border-btn h4-th"
               block
               rounded
               @click="clearForm"
@@ -114,7 +132,9 @@
         </v-row>
       </v-form>
     </template>
+
     <template v-slot:content-right>
+      <!-- edit account menu -->
       <v-list-item
         :class="
           selectedMenu === 'editAccount' ? 'bg-blueGreen' : 'bg-whiteCream'
@@ -123,6 +143,8 @@
         title="แก้ไขข้อมูลส่วนตัว"
         @click="setSelectedMenu('editAccount')"
       ></v-list-item>
+
+      <!-- change password menu -->
       <v-list-item
         :class="
           selectedMenu === 'changePassword' ? 'bg-blueGreen' : 'bg-whiteCream'
@@ -131,6 +153,35 @@
         title="เปลี่ยนรหัสผ่าน"
         @click="setSelectedMenu('changePassword')"
       ></v-list-item>
+
+      <v-spacer></v-spacer>
+
+      <!-- delete account button -->
+      <v-btn class="ma-5 h4-th" color="error"
+        >ลบบัญชี
+        <!-- confirm delete notice dialog -->
+        <v-dialog
+          v-model="deleteDialog"
+          persistent
+          activator="parent"
+          class="text-12"
+          width="auto"
+        >
+          <v-card class="h4-th"
+            ><v-card-title> ลบบัญชี </v-card-title>
+            <v-card-text>คุณต้องการลบบัญชีนี้หรือไม่</v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn class="bg-mattBlue" @click="confirmDeleteAccount()">
+                ใช่
+              </v-btn>
+              <v-btn variant="outlined" @click="deleteDialog = false">
+                ไม่
+              </v-btn>
+            </v-card-actions></v-card
+          ></v-dialog
+        >
+      </v-btn>
     </template>
   </CardContent>
 </template>
@@ -139,9 +190,22 @@
 import CardContent from "./CardContent.vue";
 import { encryptData } from "../services/encrypt";
 import {
+  // deleteUserFirebase,
   getUserByIdFirebase,
   updateUserFirebase,
 } from "../services/firebases/users";
+
+// import {
+//   getNoticeByUserIdFirebase,
+//   deleteNoticeByUserIdFirebase,
+// } from "../services/firebases/notices";
+// import {
+//   getChatByNoticeIdFirebase,
+//   deleteChatByNoticeIdFirebase,
+//   getChatByVisitorIdFirebase,
+//   deleteChatByVisitorIdFirebase,
+// } from "../services/firebases/chats";
+// import { deleteMessageByChatIdFirebase } from "../services/firebases/messages";
 export default {
   name: "EditAccount",
   components: {
@@ -149,8 +213,8 @@ export default {
   },
   data() {
     return {
-      userId: null,
       selectedMenu: "editAccount",
+      deleteDialog: false,
       user: {
         firstName: "",
         lastName: "",
@@ -199,7 +263,7 @@ export default {
       this.showPassword = !this.showPassword;
     },
     async getUser() {
-      const user = await getUserByIdFirebase(this.userId);
+      const user = await getUserByIdFirebase(this.getUserId);
       this.user = user;
     },
     async updateAccount() {
@@ -209,9 +273,9 @@ export default {
         email: this.user.email,
         username: this.user.username,
       };
-      await updateUserFirebase(this.userId, newData);
+      await updateUserFirebase(this.getUserId, newData);
       alert("แก้ไขข้อมูลส่วนตัวสำเร็จ");
-      this.$router.push("/about");
+      this.$router.back();
       this.resetForm();
     },
 
@@ -221,9 +285,9 @@ export default {
       const newData = {
         password: encryptPassword,
       };
-      await updateUserFirebase(this.userId, newData);
+      await updateUserFirebase(this.getUserId, newData);
       alert("เปลี่ยนรหัสผ่านใหม่สำเร็จ");
-      this.$router.push("/about");
+      this.$router.back();
       this.resetForm();
     },
 
@@ -247,16 +311,49 @@ export default {
       }
     },
     clearForm() {
-      this.$router.push("/about");
+      this.$router.back();
     },
 
     resetForm() {
       this.$refs.form.reset();
     },
+
+    async confirmDeleteAccount() {
+      // //delete all owner notice, chat, message
+      // let noticesList = await getNoticeByUserIdFirebase(this.getUserId);
+      // for (let i in noticesList) {
+      //   let chatsList = await getChatByNoticeIdFirebase(
+      //     noticesList[i].noticeId
+      //   );
+      //   for (let j in chatsList) {
+      //     await deleteMessageByChatIdFirebase(chatsList[j].chatId);
+      //   }
+      //   await deleteChatByNoticeIdFirebase(noticesList[i].noticeId);
+      // }
+      // await deleteNoticeByUserIdFirebase(this.getUserId);
+
+      // //delete all visitor chat, message
+      // let chatsList = await getChatByVisitorIdFirebase(this.getUserId);
+      // for (let i in chatsList) {
+      //   await deleteMessageByChatIdFirebase(chatsList[i].chatId);
+      // }
+      // await deleteChatByVisitorIdFirebase(this.getUserId);
+
+      // //delete account
+      // await deleteUserFirebase(this.getUserId);
+
+      alert("ลบบัญชีสำเร็จ");
+      this.deleteDialog = false;
+      this.$router.push("/");
+      this.$store.dispatch("userId/logOut");
+    },
+  },
+  computed: {
+    getUserId() {
+      return this.$store.getters["userId/getUserId"];
+    },
   },
   created() {
-    const id = this.$route.params.id;
-    this.userId = id;
     this.getUser();
   },
 };
@@ -286,23 +383,9 @@ export default {
   margin-bottom: 0;
 }
 
-.label-text {
-  font-family: "Noto Serif Thai";
-  font-style: normal;
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 26px;
-  color: #f1f1f1;
-}
-
 .btn {
   height: 45px;
   margin-top: 20px;
-  font-family: "Noto Serif Thai";
-  font-style: normal;
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 26px;
   filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
 }
 .border-btn {

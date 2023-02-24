@@ -14,19 +14,22 @@ import db from "../../firebase";
 
 const usersColRef = collection(db, "users");
 
+//create
 export async function createUserFirebase(user) {
   await addDoc(usersColRef, user);
 }
 
+//update
+export async function updateUserFirebase(id, newData) {
+  const userRef = doc(usersColRef, id);
+  await updateDoc(userRef, newData);
+}
+
+//get
 export async function getUserByIdFirebase(id) {
   const userRef = doc(usersColRef, id);
   const user = await getDoc(userRef);
   return user.data();
-}
-
-export async function updateUserFirebase(id, newData) {
-  const userRef = doc(usersColRef, id);
-  await updateDoc(userRef, newData);
 }
 
 export async function getUsersFirebase() {
@@ -39,11 +42,19 @@ export async function getUsersFirebase() {
   return users;
 }
 
+export async function getNameByIdFirebase(id) {
+  const userRef = doc(usersColRef, id);
+  const user = await getDoc(userRef);
+  return `${user.data().firstName} ${user.data().lastName}`;
+}
+
+//delete
 export async function deleteUserFirebase(id) {
   const userRef = doc(usersColRef, id);
   await deleteDoc(userRef);
 }
 
+//check
 export async function isMatchUserFirebase(username, password) {
   let userId = null;
 

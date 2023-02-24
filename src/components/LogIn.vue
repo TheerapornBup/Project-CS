@@ -4,7 +4,7 @@
       ><label class="title">LOG IN</label>
       <v-form class="log-in-form" ref="form">
         <div class="log-in-field">
-          <label class="label-text">ชื่อผู้ใช้/อีเมล</label>
+          <label class="h4-th">ชื่อผู้ใช้/อีเมล</label>
           <v-text-field
             prepend-inner-icon="mdi-account"
             bg-color="lightWhite"
@@ -15,7 +15,7 @@
           />
         </div>
         <div class="log-in-field">
-          <label class="label-text">รหัสผ่าน</label>
+          <label class="h4-th">รหัสผ่าน</label>
           <v-text-field
             prepend-inner-icon="mdi-lock"
             :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
@@ -30,7 +30,7 @@
         </div>
         <div class="log-in-field">
           <v-btn
-            class="bg-lightGreen text-black btn"
+            class="bg-lightGreen text-black btn h4-th"
             rounded
             block
             @click.prevent="validateForm"
@@ -41,7 +41,7 @@
         <div class="log-in-field">
           <v-btn
             to="/create-account"
-            class="bg-blueGreen text-whiteCream btn"
+            class="bg-blueGreen text-whiteCream btn h4-th"
             rounded
             block
           >
@@ -79,7 +79,8 @@ export default {
   },
   methods: {
     logIn() {
-      this.$router.push(`/edit-account/${this.userId}`);
+      this.$router.push("/search");
+      this.$store.dispatch("userId/logIn", this.userId);
       this.resetForm();
     },
     async validateForm() {
@@ -121,6 +122,19 @@ export default {
 .v-text-field {
   color: black;
 }
+.v-messages {
+  font-family: "Noto Serif Thai";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 10px;
+}
+.v-input {
+  font-family: "Noto Serif Thai";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 26px;
+}
 .title {
   font-family: "Playfair Display";
   font-style: normal;
@@ -140,21 +154,8 @@ export default {
   margin-bottom: 10px;
 }
 
-.label-text {
-  font-family: "Noto Serif Thai";
-  font-style: normal;
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 26px;
-}
-
 .btn {
   height: 45px;
   margin-top: 20px;
-  font-family: "Noto Serif Thai";
-  font-style: normal;
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 26px;
 }
 </style>

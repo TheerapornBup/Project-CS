@@ -1,11 +1,14 @@
 <template>
   <CardContent>
     <template v-slot:content-left>
+      <!-- register title -->
       <label class="title">REGISTER</label>
+
       <v-form class="log-in-form" ref="form">
         <div class="log-in-group-field">
+          <!-- first name text field -->
           <div class="log-in-field">
-            <label class="label-text">ชื่อ</label>
+            <label class="h4-th">ชื่อ</label>
             <v-text-field
               bg-color="lightWhite"
               density="compact"
@@ -14,8 +17,10 @@
               :rules="nameRules"
             />
           </div>
+
+          <!-- last name text field -->
           <div class="log-in-field">
-            <label class="label-text">นามสกุล</label>
+            <label class="h4-th">นามสกุล</label>
             <v-text-field
               bg-color="lightWhite"
               density="compact"
@@ -24,8 +29,10 @@
               :rules="nameRules"
             />
           </div>
+
+          <!-- email text field -->
           <div class="log-in-field">
-            <label class="label-text">อีเมล</label>
+            <label class="h4-th">อีเมล</label>
             <v-text-field
               type="email"
               bg-color="lightWhite"
@@ -37,11 +44,12 @@
           </div>
         </div>
 
-        <v-divider thickness="3" color="whiteCream"></v-divider>
+        <!-- <v-divider thickness="3" color="whiteCream"></v-divider> -->
 
+        <!-- username text field -->
         <div class="log-in-group-field">
           <div class="log-in-field">
-            <label class="label-text">ชื่อผู้ใช้</label>
+            <label class="h4-th">ชื่อผู้ใช้</label>
             <v-text-field
               bg-color="lightWhite"
               density="compact"
@@ -50,8 +58,10 @@
               :rules="usernameRules"
             />
           </div>
+
+          <!-- password text field -->
           <div class="log-in-field">
-            <label class="label-text">รหัสผ่าน</label>
+            <label class="h4-th">รหัสผ่าน</label>
             <v-text-field
               :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
               :type="showPassword ? 'text' : 'password'"
@@ -63,8 +73,10 @@
               :rules="passwordRules"
             />
           </div>
+
+          <!-- confirm password text field -->
           <div class="log-in-field">
-            <label class="label-text">ยืนยันรหัสผ่าน</label>
+            <label class="h4-th">ยืนยันรหัสผ่าน</label>
             <v-text-field
               :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
               :type="showPassword ? 'text' : 'password'"
@@ -78,6 +90,7 @@
           </div>
         </div>
 
+        <!-- policy checkbox -->
         <div class="log-in-field">
           <v-checkbox
             class="checkbox-text"
@@ -87,9 +100,11 @@
             :rules="checkboxRules"
           ></v-checkbox>
         </div>
+
+        <!-- create account button -->
         <div class="log-in-field log-in-group-field">
           <v-btn
-            class="bg-lightGreen text-black btn"
+            class="bg-lightGreen text-black btn h4-th"
             rounded
             block
             @click.prevent="validateForm"
@@ -224,15 +239,6 @@ export default {
   margin-bottom: 10px;
 }
 
-.label-text {
-  font-family: "Noto Serif Thai";
-  font-style: normal;
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 26px;
-  color: #f1f1f1;
-}
-
 .checkbox-text {
   font-family: "Noto Serif Thai";
   font-style: normal;
@@ -248,10 +254,5 @@ export default {
 .btn {
   height: 40px;
   margin-top: 0px;
-  font-family: "Noto Serif Thai";
-  font-style: normal;
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 26px;
 }
 </style>

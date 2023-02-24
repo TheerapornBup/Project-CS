@@ -15,7 +15,7 @@ const myCustomTheme = {
     error: "#da0000",
     info: "#A6D2CD",
     success: "#14A44D",
-    warning: "#EAE7E6",
+    warning: "#E4A11B",
     mattBlue: "#4B7085",
     blueGreen: "#358787",
     lightGreen: "#A6D2CD",
