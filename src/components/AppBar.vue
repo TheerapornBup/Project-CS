@@ -17,7 +17,7 @@
       class="h4-th"
       variant="text"
       color="whiteCream"
-      to="/"
+      to="/log-in"
       >เข้าสู่ระบบ</v-btn
     >
 
