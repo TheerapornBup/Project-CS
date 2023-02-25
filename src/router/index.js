@@ -48,6 +48,12 @@ const routes = [
 
     component: () => import("../components/NoticeSearch.vue"),
   },
+  {
+    path: "/location",
+    name: "location",
+
+    component: () => import("../components/LocationField.vue"),
+  },
 ];
 
 const router = createRouter({
