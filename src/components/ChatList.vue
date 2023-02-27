@@ -102,6 +102,7 @@ export default {
       tabs: ["ทั้งหมด", "ยืนยันสถานะแล้ว", "ยังไม่ยืนยันสถานะ"],
       allNotices: [],
       allChats: [],
+      isVistor: true,
     };
   },
   methods: {
@@ -121,45 +122,49 @@ export default {
       return n;
     },
     async getNotices() {
-      //all notice that user = owner
-      let noticesList = [];
-      const notices = await getNoticesByUserIdFirebase(this.getUserId);
-      const name = await getNameByIdFirebase(this.getUserId);
-      for (let index in notices) {
-        noticesList.push({ ...notices[index], name: name });
-      }
-
-      //all chat that user = owner notice
       let chatsList = [];
-      for (let i in noticesList) {
-        let chats = await getChatByNoticeIdFirebase(noticesList[i].noticeId);
 
-        for (let j in chats) {
-          const visitorName = await getNameByIdFirebase(chats[j].visitorId);
-          const messages = await getMessageByChatIdFirebase(chats[j].chatId);
+      if (!this.isVistor) {
+        //all notice that user = owner
+        let noticesList = [];
+        const notices = await getNoticesByUserIdFirebase(this.getUserId);
+        const name = await getNameByIdFirebase(this.getUserId);
+        for (let index in notices) {
+          noticesList.push({ ...notices[index], name: name });
+        }
+
+        //all chat that user = owner notice
+
+        for (let i in noticesList) {
+          let chats = await getChatByNoticeIdFirebase(noticesList[i].noticeId);
+
+          for (let j in chats) {
+            const visitorName = await getNameByIdFirebase(chats[j].visitorId);
+            const messages = await getMessageByChatIdFirebase(chats[j].chatId);
+            chatsList.push({
+              ...chats[j],
+              visitorName: visitorName,
+              notice: noticesList[i],
+              messages: messages,
+            });
+          }
+        }
+      } else {
+        //all chat that user = visitor
+        let chats = await getChatByVisitorIdFirebase(this.getUserId);
+
+        //all notice that user = visitor
+        for (let i in chats) {
+          const notice = await getNoticeByIdFirebase(chats[i].noticeId);
+          const messages = await getMessageByChatIdFirebase(chats[i].chatId);
+
+          const name = await getNameByIdFirebase(notice.userId);
           chatsList.push({
-            ...chats[j],
-            visitorName: visitorName,
-            notice: noticesList[i],
+            ...chats[i],
+            notice: { ...notice, name: name },
             messages: messages,
           });
         }
-      }
-
-      //all chat that user = visitor
-      let chats = await getChatByVisitorIdFirebase(this.getUserId);
-
-      //all notice that user = visitor
-      for (let i in chats) {
-        const notice = await getNoticeByIdFirebase(chats[i].noticeId);
-        const messages = await getMessageByChatIdFirebase(chats[i].chatId);
-
-        const name = await getNameByIdFirebase(notice.userId);
-        chatsList.push({
-          ...chats[i],
-          notice: { ...notice, name: name },
-          messages: messages,
-        });
       }
 
       this.allChats = chatsList;
@@ -200,11 +205,18 @@ export default {
     chatId: function () {
       this.getMessages();
     },
+    "$route.params.isVistor"() {
+      this.isVistor = this.$route.params.isVistor === "true";
+
+      this.getNotices();
+    },
   },
   // mounted() {
   //   this.matchHeight();
   // },
   created() {
+    this.isVistor = this.$route.params.isVistor === "true";
+
     this.getNotices();
   },
 };

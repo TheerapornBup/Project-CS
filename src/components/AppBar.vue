@@ -90,7 +90,26 @@
         :prepend-icon="item.icon"
         class="bg-lightBrown mt-5 shadow"
       >
-      </v-list-item>
+      </v-list-item
+      ><v-list-group value="chat">
+        <template v-slot:activator="{ props }">
+          <v-list-item
+            v-bind="props"
+            title="แชท"
+            prepend-icon="mdi-forum-outline"
+            class="bg-lightBrown mt-5 shadow"
+          ></v-list-item>
+        </template>
+
+        <v-list-item
+          v-for="(chat, i) in chatsMenu"
+          :key="i"
+          :value="chat.title"
+          :title="chat.title"
+          :to="{ name: 'chatList', params: { isVistor: chat.isVistor } }"
+          style="background-color: #e5c2a3"
+        ></v-list-item
+      ></v-list-group>
     </v-list>
   </v-navigation-drawer>
 </template>
@@ -114,6 +133,11 @@ export default {
 
       drawer: false,
 
+      chatsMenu: [
+        { title: "แชทที่เป็นผู้เริ่มสนทนา", isVistor: true },
+        { title: "แชทที่เป็นผู้ตอบสนทนา", isVistor: false },
+      ],
+
       items: [
         {
           title: "ค้นหาประกาศของหาย",
@@ -123,17 +147,12 @@ export default {
         {
           title: "เพิ่มประกาศของหาย",
           icon: "mdi-file-plus-outline",
-          route: "/search",
+          route: "/location",
         },
         {
           title: "ประวัติใบประกาศที่เคยสร้าง",
           icon: "mdi-history",
           route: "/history",
-        },
-        {
-          title: "แชท",
-          icon: "mdi-forum-outline",
-          route: "/chat-list",
         },
       ],
     };

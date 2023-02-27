@@ -31,9 +31,8 @@ const routes = [
     component: () => import("../components/NoticeChat.vue"),
   },
   {
-    path: "/chat-list",
+    path: "/chat-list/:isVistor",
     name: "chatList",
-
     component: () => import("../components/ChatList.vue"),
   },
   {
