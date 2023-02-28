@@ -12,7 +12,7 @@ const myCustomTheme = {
     primary: "#4B7085",
     secondary: "#358787",
     anchor: "#358787",
-    error: "#da0000",
+    error: "#DC4C64",
     info: "#A6D2CD",
     success: "#14A44D",
     warning: "#E4A11B",

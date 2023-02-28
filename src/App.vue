@@ -39,6 +39,13 @@ export default {
   font-size: 20px;
   line-height: 27px;
 }
+.h3-th {
+  font-family: "Noto Serif Thai";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 24px;
+  line-height: 38px;
+}
 .h4-th {
   font-family: "Noto Serif Thai";
   font-style: normal;

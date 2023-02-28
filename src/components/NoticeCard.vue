@@ -132,7 +132,7 @@
           <!-- edit notice button -->
           <v-col cols="12" v-if="notice.userId === getUserId">
             <v-btn
-              prepend-icon="mdi-file-edit-outline"
+              prepend-icon="mdi-file-edit-outline "
               variant="text"
               class="h4-th"
               >แก้ไข</v-btn
@@ -148,20 +148,46 @@
                 v-model="deleteDialog"
                 persistent
                 activator="parent"
-                class="h4-th"
                 width="auto"
               >
-                <v-card
-                  ><v-card-title> ลบใบประกาศ </v-card-title>
-                  <v-card-text>คุณต้องการลบใบประกาศนี้หรือไม่</v-card-text>
-                  <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <v-btn class="bg-mattBlue" @click="confirmDeleteNotice()">
-                      ใช่
-                    </v-btn>
-                    <v-btn variant="outlined" @click="deleteDialog = false">
-                      ไม่
-                    </v-btn>
+                <v-card class="h3-th pa-5">
+                  <v-row no-gutters="true">
+                    <v-col cols="12">
+                      <v-btn
+                        icon="mdi-close"
+                        class="float-end d-inline"
+                        flat
+                        @click="deleteDialog = false"
+                      ></v-btn>
+                    </v-col>
+                  </v-row>
+                  <v-card-text
+                    >คุณแน่ใจหรือไม่ว่าต้องการลบ “ใบประกาศ” นี้?</v-card-text
+                  >
+
+                  <v-card-actions class="mt-5">
+                    <v-row>
+                      <v-col>
+                        <v-btn
+                          class="bg-error"
+                          rounded="pill"
+                          block
+                          @click="confirmDeleteNotice()"
+                        >
+                          ลบ
+                        </v-btn>
+                      </v-col>
+                      <v-col>
+                        <v-btn
+                          variant="outlined"
+                          rounded="pill"
+                          block
+                          @click="deleteDialog = false"
+                        >
+                          ยกเลิก
+                        </v-btn>
+                      </v-col>
+                    </v-row>
                   </v-card-actions></v-card
                 ></v-dialog
               >

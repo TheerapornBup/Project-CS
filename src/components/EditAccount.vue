@@ -157,26 +157,48 @@
       <v-spacer></v-spacer>
 
       <!-- delete account button -->
-      <v-btn class="ma-5 h4-th" color="error"
+      <v-btn class="ma-5 h4-th" color="error" rounded="pill"
         >ลบบัญชี
         <!-- confirm delete notice dialog -->
         <v-dialog
           v-model="deleteDialog"
           persistent
           activator="parent"
-          class="text-12"
           width="auto"
         >
-          <v-card class="h4-th"
-            ><v-card-title> ลบบัญชี </v-card-title>
-            <v-card-text>คุณต้องการลบบัญชีนี้หรือไม่</v-card-text>
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn class="bg-mattBlue" @click="confirmDeleteAccount()">
-                ใช่
+          <v-card class="h4-th pa-5">
+            <v-row no-gutters="true">
+              <v-col cols="12">
+                <v-btn
+                  icon="mdi-close"
+                  class="float-end d-inline"
+                  flat
+                  @click="deleteDialog = false"
+                ></v-btn>
+              </v-col>
+            </v-row>
+
+            <v-card-title class="text-center">
+              คุณแน่ใจหรือไม่ว่าต้องการลบ “บัญชี” นี้?
+            </v-card-title>
+            <v-card-text
+              >เมื่อกด “ลบบัญชี” ข้อมูลของคุณจะถูกลบออกจากระบบภายใน 30
+              วัน</v-card-text
+            >
+            <v-card-actions class="d-flex justify-space-evenly">
+              <v-btn
+                class="bg-error flex-grow-1"
+                rounded="pill "
+                @click="confirmDeleteAccount()"
+              >
+                ลบ
               </v-btn>
-              <v-btn variant="outlined" @click="deleteDialog = false">
-                ไม่
+              <v-btn
+                variant="outlined flex-grow-1"
+                rounded="pill "
+                @click="deleteDialog = false"
+              >
+                ยกเลิก
               </v-btn>
             </v-card-actions></v-card
           ></v-dialog
