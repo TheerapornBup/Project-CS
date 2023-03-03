@@ -69,7 +69,7 @@
     ></v-btn>
   </v-sheet>
   <v-btn
-    v-if="getUserId === notice.userId && !notice.status"
+    v-if="getUserId === notice.userId && !notice.status && !isSendNotifyNotice"
     block
     rounded="0"
     class="bg-mattBlue text-center h4-th"
@@ -82,17 +82,45 @@
       class="h4-th"
       width="auto"
     >
-      <v-card
-        ><v-card-title> ยืนยันรับของ </v-card-title>
-        <v-card-text>คุณต้องการยืนยันการรับของหรือไม่</v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn class="bg-mattBlue" @click="confirmNoticeStatus()">
-            ยืนยัน
-          </v-btn>
-          <v-btn variant="outlined" @click="dialog = false"> ยกเลิก </v-btn>
-        </v-card-actions></v-card
-      >
+      <v-card class="h4-th pa-5">
+        <v-row no-gutters="true">
+          <v-col cols="12">
+            <v-btn
+              icon="mdi-close"
+              class="float-end d-inline"
+              flat
+              @click="dialog = false"
+            ></v-btn>
+          </v-col>
+        </v-row>
+        <v-card-title class="text-center"> ยืนยันรับส่งของ </v-card-title>
+        <v-card-text>คุณต้องการยืนยันการรับส่งของหรือไม่</v-card-text>
+
+        <v-card-actions class="mt-5">
+          <v-row>
+            <v-col>
+              <v-btn
+                class="bg-mattBlue"
+                rounded="pill"
+                block
+                @click="confirmNoticeStatus()"
+              >
+                ยืนยัน
+              </v-btn>
+            </v-col>
+            <v-col>
+              <v-btn
+                variant="outlined"
+                rounded="pill"
+                block
+                @click="dialog = false"
+              >
+                ยกเลิก
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-card-actions>
+      </v-card>
     </v-dialog>
   </v-btn>
 </template>
@@ -110,10 +138,21 @@ import {
   createMessageFirebase,
 } from "../services/firebases/messages";
 
+import {
+  createNotificationFirebase,
+  isExistNotificationFirebase,
+  isMatchNotificationFirebase,
+  updateNotificationFirebase,
+} from "../services/firebases/notifications";
+
 export default {
   name: "ChatMessage",
   props: {
     chatId: {
+      type: String,
+      require,
+    },
+    visitorId: {
       type: String,
       require,
     },
@@ -126,6 +165,7 @@ export default {
     return {
       messages: [],
       dialog: false,
+      isSendNotifyNotice: false,
     };
   },
   methods: {
@@ -139,6 +179,16 @@ export default {
         };
         //create message
         await createMessageFirebase(message);
+
+        //create or update message notification
+        await this.sendNotificationMessage(
+          "ข้อความ",
+          this.chatId,
+          this.notice.userId === this.getUserId
+            ? this.visitorId
+            : this.notice.userId
+        );
+
         //get all message by chat id
         await this.getMessages();
 
@@ -175,8 +225,53 @@ export default {
       }
     },
     async confirmNoticeStatus() {
+      await this.sendNotification(
+        "รอการยืนยันการรับส่งของ",
+        this.notice.noticeId,
+        this.visitorId
+      );
       alert("ยืนยันการรับของสำเร็จ");
       this.dialog = false;
+      this.isSendNotifyNotice = true;
+    },
+
+    async sendNotificationMessage(type, itemId, userId) {
+      // check is exist notification type message
+      const notificationId = await isMatchNotificationFirebase(
+        type,
+        itemId,
+        userId
+      );
+
+      if (notificationId !== null) {
+        // yes , update time notification
+        const notification = {
+          dateTime: new Date(),
+        };
+        await updateNotificationFirebase(notificationId, notification);
+      } else {
+        //no , create notification
+        await this.sendNotification(type, itemId, userId);
+      }
+    },
+
+    async sendNotification(type, itemId, userId) {
+      //ยืนยันการรับส่งของ ข้อความ ใบประกาศหมดอายุ
+      const notification = {
+        userId: userId,
+        itemId: itemId,
+        type: type,
+        dateTime: new Date(),
+      };
+      await createNotificationFirebase(notification);
+    },
+
+    async getIsSendNotifyNotice() {
+      const isSend = await isExistNotificationFirebase(
+        "รอการยืนยันการรับส่งของ",
+        this.notice.noticeId
+      );
+      this.isSendNotifyNotice = isSend;
     },
   },
   computed: {
@@ -201,11 +296,13 @@ export default {
     },
     chatId: function () {
       this.getMessages();
+      this.getIsSendNotifyNotice();
     },
   },
 
   created() {
     this.getMessages();
+    this.getIsSendNotifyNotice();
   },
 };
 </script>

@@ -2,7 +2,7 @@
   <CardContent>
     <!-- chat -->
     <template v-slot:content-left>
-      <ChatMessage :chatId="chatId" :notice="notice" />
+      <ChatMessage :chatId="chatId" :notice="notice" :visitorId="getUserId" />
     </template>
     <!-- notice details -->
     <template v-slot:content-right>

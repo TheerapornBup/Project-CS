@@ -9,6 +9,7 @@ import {
   query,
   where,
   orderBy,
+  limit,
 } from "firebase/firestore";
 import db from "../../firebase";
 
@@ -56,6 +57,27 @@ export async function getMessageByChatIdFirebase(chatId) {
     messagesSnapshot.forEach((message) => {
       const messageData = message.data();
       messages.push(messageData);
+    });
+  }
+  return messages;
+}
+
+export async function getLastestMessageByChatIdFirebase(chatId, sender) {
+  const q = query(
+    messagesColRef,
+    where("chatId", "==", chatId),
+    where("sender", "==", sender),
+    orderBy("dateTime", "desc"),
+    limit(1)
+  );
+  let messagesSnapshot = await getDocs(q);
+  console.log(messagesSnapshot);
+
+  let messages = null;
+  if (!messagesSnapshot.empty) {
+    messagesSnapshot.forEach((message) => {
+      const messageData = message.data();
+      messages = messageData;
     });
   }
   return messages;

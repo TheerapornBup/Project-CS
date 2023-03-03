@@ -11,6 +11,46 @@
       >Physical Center-less Lost and Found System</v-app-bar-title
     >
 
+    <!-- notification button -->
+    <v-menu
+      v-if="getUserId != null"
+      v-model="notificationMenu"
+      :close-on-content-click="false"
+      location="start"
+    >
+      <!-- notification button -->
+      <template v-slot:activator="{ props }">
+        <v-btn class="mr-3" icon="mdi-bell" color="lightGreen" v-bind="props">
+        </v-btn>
+      </template>
+
+      <v-card min-width="300" class="h4-th overflow-y-auto">
+        <v-list>
+          <!-- profile information -->
+          <v-list-item
+            v-for="(notification, index) in notifications"
+            :key="index"
+            ><template v-slot:prepend>
+              <v-avatar color="mattBlue"
+                ><v-icon>{{
+                  getIconNotification(notification.type)
+                }}</v-icon></v-avatar
+              >
+            </template>
+            <v-list-item-title> {{ notification.item.name }}</v-list-item-title>
+            <v-list-item-subtitle>{{
+              getTitleNotification(notification.type, notification.item)
+            }}</v-list-item-subtitle>
+            <template v-slot:append v-if="notification.type === 'ข้อความ'">
+              <p class="h5-th">
+                {{ getTime(notification.item.dateTime.seconds) }}
+              </p>
+            </template>
+          </v-list-item>
+        </v-list>
+      </v-card>
+    </v-menu>
+
     <!-- log in button -->
     <v-btn
       v-if="getUserId == null"
@@ -31,7 +71,7 @@
       <!-- profile avatar -->
       <template v-slot:activator="{ props }">
         <v-avatar
-          class="bg-lightGreen mr-2 pointer h4-th"
+          class="bg-lightGreen mr-3 pointer h4-th"
           v-bind="props"
           variant="elevated"
         >
@@ -115,7 +155,15 @@
 </template>
 
 <script>
-import { getUserByIdFirebase } from "../services/firebases/users";
+import {
+  getUserByIdFirebase,
+  getNameByIdFirebase,
+} from "../services/firebases/users";
+import { getNotificationsByUserIdFirebase } from "../services/firebases/notifications";
+import { getLastestMessageByChatIdFirebase } from "../services/firebases/messages";
+import { getNoticeByIdFirebase } from "../services/firebases/notices";
+import { getChatByIdFirebase } from "@/services/firebases/chats";
+import { convertTimestampToTime } from "@/services/DateTime";
 export default {
   name: "AppBar",
 
@@ -130,7 +178,7 @@ export default {
       },
 
       profileMenu: false,
-
+      notificationMenu: false,
       drawer: false,
 
       chatsMenu: [
@@ -155,6 +203,8 @@ export default {
           route: "/history",
         },
       ],
+
+      notifications: [],
     };
   },
   methods: {
@@ -176,6 +226,57 @@ export default {
       `.toUpperCase();
       return name;
     },
+    async getNotifications() {
+      const notificationsList = await getNotificationsByUserIdFirebase(
+        this.getUserId
+      );
+      for (let i in notificationsList) {
+        const notification = notificationsList[i];
+        let item = {};
+        let name = "";
+        if (notification.type === "ข้อความ") {
+          const chat = await getChatByIdFirebase(notification.itemId);
+          item = await getLastestMessageByChatIdFirebase(
+            notification.itemId,
+            notification.userId !== chat.visitorId
+          );
+
+          if (item.sender) {
+            name = await getNameByIdFirebase(chat.visitorId);
+          } else {
+            const notice = await getNoticeByIdFirebase(chat.noticeId);
+            name = await getNameByIdFirebase(notice.userId);
+          }
+        } else if (notification.type === "รอการยืนยันการรับส่งของ") {
+          item = await getNoticeByIdFirebase(notification.itemId);
+          name = await getNameByIdFirebase(item.userId);
+        }
+        notificationsList[i]["item"] = { ...item, name: name };
+      }
+      this.notifications = notificationsList;
+    },
+    getIconNotification(type) {
+      let icon = "mdi-file-clock-outline";
+      if (type === "ข้อความ") {
+        icon = "mdi-forum-outline";
+      } else if (type === "รอการยืนยันการรับส่งของ") {
+        icon = "mdi-package-variant-closed";
+      }
+      return icon;
+    },
+    getTitleNotification(type, item) {
+      let title = "";
+      if (type === "ข้อความ") {
+        title = item.text;
+      } else if (type === "รอการยืนยันการรับส่งของ") {
+        title = type;
+      }
+      return title;
+    },
+    getTime(timestamp) {
+      const time = convertTimestampToTime(timestamp);
+      return time;
+    },
   },
 
   computed: {
@@ -188,6 +289,7 @@ export default {
       handler: function () {
         if (this.getUserId != null) {
           this.getUser();
+          this.getNotifications();
         }
       },
       deep: true,

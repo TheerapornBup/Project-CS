@@ -54,6 +54,7 @@
             <ChatMessage
               v-if="allChats.length > 0"
               :chatId="allChats[selectedChat].chatId"
+              :visitorId="allChats[selectedChat].visitorId"
               :notice="allChats[selectedChat].notice"
               @updateMessage="updateMessage"
               class="noticeChat"
