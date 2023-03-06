@@ -19,6 +19,12 @@ const routes = [
     component: () => import("../components/CreateAccount.vue"),
   },
   {
+    path: "/policy-terms",
+    name: "policyTerms",
+
+    component: () => import("../components/PolicyTerms.vue"),
+  },
+  {
     path: "/edit-account",
     name: "editAccount",
 

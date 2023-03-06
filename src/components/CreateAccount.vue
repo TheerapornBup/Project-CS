@@ -95,10 +95,18 @@
           <v-checkbox
             class="checkbox-text"
             v-model="isAgree"
-            :label="`ฉันได้อ่าน และ อนุมัติ ข้อกำหนดในการให้บริการและนโยบายความเป็นส่วนตัวแล้ว`"
             density="compact"
             :rules="checkboxRules"
-          ></v-checkbox>
+          >
+            <template v-slot:label>
+              <div>
+                ฉันได้อ่าน และ อนุมัติ
+                <router-link to="/policy-terms">
+                  ข้อกำหนดในการให้บริการและนโยบายความเป็นส่วนตัวแล้ว
+                </router-link>
+              </div>
+            </template>
+          </v-checkbox>
         </div>
 
         <!-- create account button -->
