@@ -29,7 +29,8 @@ export async function updateNoticeFirebase(id, newData) {
 export async function getNoticeByIdFirebase(id) {
   const noticeRef = doc(noticesColRef, id);
   const notice = await getDoc(noticeRef);
-  return notice.data();
+  const noticeData = notice.data();
+  return { ...noticeData, noticeId: notice.id };
 }
 
 export async function getNoticesFirebase() {

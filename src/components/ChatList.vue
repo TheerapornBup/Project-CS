@@ -32,16 +32,20 @@
                   }}</v-list-item-title>
                   <!-- lastest message -->
                   <v-list-item-subtitle class="h5-th">{{
-                    chat.messages[chat.messages.length - 1].text
+                    chat.messages.length > 0
+                      ? chat.messages[chat.messages.length - 1].text
+                      : ""
                   }}</v-list-item-subtitle>
                   <!-- time message -->
                   <template v-slot:append>
                     <p class="h5-th">
                       {{
-                        getTime(
-                          chat.messages[chat.messages.length - 1].dateTime
-                            .seconds
-                        )
+                        chat.messages.length > 0
+                          ? getTime(
+                              chat.messages[chat.messages.length - 1].dateTime
+                                .seconds
+                            )
+                          : ""
                       }}
                     </p>
                   </template>
@@ -57,6 +61,7 @@
               :visitorId="allChats[selectedChat].visitorId"
               :notice="allChats[selectedChat].notice"
               @updateMessage="updateMessage"
+              @updateStatus="updateStatus"
               class="noticeChat"
               ref="noticeChat"
             />
@@ -178,6 +183,12 @@ export default {
       this.allChats[this.selectedChat] = {
         ...this.allChats[this.selectedChat],
         messages: messages,
+      };
+    },
+    updateStatus(status) {
+      this.allChats[this.selectedChat] = {
+        ...this.allChats[this.selectedChat],
+        notice: { ...this.allChats[this.selectedChat].notice, status: status },
       };
     },
 

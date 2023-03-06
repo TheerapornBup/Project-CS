@@ -30,6 +30,7 @@
           <v-list-item
             v-for="(notification, index) in notifications"
             :key="index"
+            @click="clickNotification(notification)"
             ><template v-slot:prepend>
               <v-avatar color="mattBlue"
                 ><v-icon>{{
@@ -234,12 +235,14 @@ export default {
         const notification = notificationsList[i];
         let item = {};
         let name = "";
+        let isVistor = true;
         if (notification.type === "ข้อความ") {
           const chat = await getChatByIdFirebase(notification.itemId);
           item = await getLastestMessageByChatIdFirebase(
             notification.itemId,
             notification.userId !== chat.visitorId
           );
+          isVistor = chat.visitorId === this.getUserId;
 
           if (item.sender) {
             name = await getNameByIdFirebase(chat.visitorId);
@@ -247,11 +250,25 @@ export default {
             const notice = await getNoticeByIdFirebase(chat.noticeId);
             name = await getNameByIdFirebase(notice.userId);
           }
-        } else if (notification.type === "รอการยืนยันการรับส่งของ") {
-          item = await getNoticeByIdFirebase(notification.itemId);
-          name = await getNameByIdFirebase(item.userId);
+        } else if (
+          notification.type === "รอการยืนยันการรับส่งของ" ||
+          notification.type === "ยืนยันการรับส่งของสำเร็จ"
+        ) {
+          const chat = await getChatByIdFirebase(notification.itemId);
+          item = await getNoticeByIdFirebase(chat.noticeId);
+          isVistor = chat.visitorId === this.getUserId;
+
+          if (isVistor) {
+            name = await getNameByIdFirebase(item.userId);
+          } else {
+            name = await getNameByIdFirebase(chat.visitorId);
+          }
         }
-        notificationsList[i]["item"] = { ...item, name: name };
+        notificationsList[i]["item"] = {
+          ...item,
+          name: name,
+          isVistor: isVistor,
+        };
       }
       this.notifications = notificationsList;
     },
@@ -259,7 +276,10 @@ export default {
       let icon = "mdi-file-clock-outline";
       if (type === "ข้อความ") {
         icon = "mdi-forum-outline";
-      } else if (type === "รอการยืนยันการรับส่งของ") {
+      } else if (
+        type === "รอการยืนยันการรับส่งของ" ||
+        type === "ยืนยันการรับส่งของสำเร็จ"
+      ) {
         icon = "mdi-package-variant-closed";
       }
       return icon;
@@ -268,10 +288,17 @@ export default {
       let title = "";
       if (type === "ข้อความ") {
         title = item.text;
-      } else if (type === "รอการยืนยันการรับส่งของ") {
+      } else if (
+        type === "รอการยืนยันการรับส่งของ" ||
+        type === "ยืนยันการรับส่งของสำเร็จ"
+      ) {
         title = type;
       }
       return title;
+    },
+    clickNotification(notification) {
+      this.$router.push(`/chat-list/${notification.item.isVistor}`);
+      this.notificationMenu = false;
     },
     getTime(timestamp) {
       const time = convertTimestampToTime(timestamp);
