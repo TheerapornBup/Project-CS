@@ -1,8 +1,21 @@
 <template>
-  <TabBar :tabs="tabs" @onChangeTab="filterNoticeStatus">
+  <TabBar
+    :tabs="tabs"
+    :selected="selectedTab"
+    @onChangeTab="filterNoticeStatus"
+  >
     <template v-slot:content-tab
-      ><v-container fluid>
-        <v-row>
+      ><v-container fluid class="d-flex">
+        <!-- loading -->
+        <v-progress-circular
+          v-if="isLoading"
+          class="ma-auto"
+          size="50"
+          indeterminate
+          color="primary"
+        ></v-progress-circular>
+
+        <v-row v-else>
           <!-- chat list -->
           <v-col cols="3">
             <v-card class="bg-whiteCream">
@@ -109,17 +122,27 @@ export default {
       allNotices: [],
       allChats: [],
       isVistor: true,
+      isLoading: false,
+      selectedTab: "ทั้งหมด",
     };
   },
   methods: {
-    filterNoticeStatus(tab) {
-      if (tab === "ยืนยันสถานะแล้ว") {
-        console.log(tab);
-      } else if (tab === "ยังไม่ยืนยันสถานะ") {
-        console.log(tab);
-      } else {
-        console.log(tab);
+    async filterNoticeStatus(tab) {
+      this.selectedTab = tab;
+      this.isLoading = true;
+      this.selectedChat = 0;
+      await this.getNotices();
+
+      if (tab !== "ทั้งหมด") {
+        this.allChats = this.allChats.filter((chat) => {
+          if (tab === "ยืนยันสถานะแล้ว") {
+            return chat.notice.status === true;
+          } else {
+            return chat.notice.status === false;
+          }
+        });
       }
+      this.isLoading = false;
     },
     getProfileName(chat) {
       const name =
@@ -128,6 +151,7 @@ export default {
       return n;
     },
     async getNotices() {
+      this.isLoading = true;
       let chatsList = [];
 
       if (!this.isVistor) {
@@ -174,6 +198,7 @@ export default {
       }
 
       this.allChats = chatsList;
+      this.isLoading = false;
     },
     getTime(timestamp) {
       const time = convertTimestampToTime(timestamp);
@@ -220,7 +245,7 @@ export default {
     "$route.params.isVistor"() {
       this.isVistor = this.$route.params.isVistor === "true";
 
-      this.getNotices();
+      this.filterNoticeStatus("ทั้งหมด");
     },
   },
   // mounted() {
@@ -229,7 +254,7 @@ export default {
   created() {
     this.isVistor = this.$route.params.isVistor === "true";
 
-    this.getNotices();
+    this.filterNoticeStatus("ทั้งหมด");
   },
 };
 </script>

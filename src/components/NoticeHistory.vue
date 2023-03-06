@@ -1,8 +1,17 @@
 <template>
-  <TabBar :tabs="tabs" @onChangeTab="filterNoticeType">
+  <TabBar :tabs="tabs" :selected="selectedType" @onChangeTab="filterNoticeType">
     <template v-slot:content-tab>
-      <v-container fluid>
-        <v-row>
+      <v-container fluid class="d-flex">
+        <!-- loading -->
+        <v-progress-circular
+          v-if="isLoading"
+          class="ma-auto"
+          size="50"
+          indeterminate
+          color="primary"
+        ></v-progress-circular>
+
+        <v-row v-else>
           <!-- select status -->
           <v-col cols="12">
             <v-select
@@ -48,6 +57,7 @@ export default {
       selectedType: "ทั้งหมด",
       notices: [],
       allNotices: [],
+      isLoading: false,
     };
   },
   methods: {
@@ -82,6 +92,7 @@ export default {
     },
 
     async getNotices() {
+      this.isLoading = true;
       let noticesList = [];
       const notices = await getNoticesByUserIdFirebase(this.getUserId);
       for (let index in notices) {
@@ -90,6 +101,7 @@ export default {
       }
       this.allNotices = noticesList;
       this.notices = this.allNotices;
+      this.isLoading = false;
     },
   },
   computed: {

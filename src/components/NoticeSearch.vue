@@ -1,6 +1,15 @@
 <template>
-  <v-container fluid>
-    <v-row>
+  <v-container fluid class="d-flex h-100">
+    <!-- loading -->
+    <v-progress-circular
+      v-if="isLoading"
+      class="ma-auto"
+      size="50"
+      indeterminate
+      color="primary"
+    ></v-progress-circular>
+
+    <v-row v-else>
       <!-- search -->
       <v-col cols="12">
         <v-card class="rounded-pill border-card"
@@ -44,29 +53,19 @@
         sm="6"
       >
         <NoticeCard
+          :key="index"
           :notice="notice"
           :showStatus="false"
           @updateNotice="getNotices"
         />
       </v-col>
-      <!-- loading -->
-      <v-progress-circular
-        v-if="isLoading"
-        class="ma-auto"
-        size="50"
-        indeterminate
-        color="primary"
-      ></v-progress-circular>
     </v-row>
   </v-container>
 </template>
 
 <script>
 import NoticeCard from "./NoticeCard.vue";
-import {
-  getNoticesFirebase,
-  createNoticeFirebase,
-} from "../services/firebases/notices";
+import { getNoticesFirebase } from "../services/firebases/notices";
 import { getNameByIdFirebase } from "../services/firebases/users";
 export default {
   name: "NoticeSearch",
@@ -95,23 +94,8 @@ export default {
       this.isLoading = false;
       this.notices = noticesList;
     },
-    async createNotice() {
-      const notice = {
-        createDateTime: new Date(),
-        dateTime: new Date(),
-        detail: "sdgssssssfdyrtuyluhl85sg,lfsegnj,ijgdfthrdfvb vcbggfg",
-        itemType: "เสื้อ",
-        pic: "https://images.unsplash.com/photo-1523381294911-8d3cead13475?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8dCUyMHNoaXJ0fGVufDB8MHwwfHw%3D&auto=format&fit=crop&w=1000&q=60",
-        status: false,
-        type: "ประกาศพบเจอของหาย",
-        userId: "veADnW3OpRztie54fQYu",
-      };
-      await createNoticeFirebase(notice);
-      alert("สร้างใบประกาศสำเร็จ");
-    },
   },
   created() {
-    //this.createNotice();
     this.getNotices();
   },
 };

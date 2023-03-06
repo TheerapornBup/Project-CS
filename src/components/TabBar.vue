@@ -31,6 +31,10 @@ export default {
       type: Array,
       require,
     },
+    selected: {
+      type: String,
+      require,
+    },
   },
   data() {
     return {
@@ -40,6 +44,9 @@ export default {
   watch: {
     selectedTab(tab) {
       this.$emit("onChangeTab", tab);
+    },
+    selected(tab) {
+      this.selectedTab = tab;
     },
   },
 };
