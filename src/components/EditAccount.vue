@@ -206,10 +206,17 @@
       </v-btn>
     </template>
   </CardContent>
+  <CustomDialog
+    :value="dialog.value"
+    :type="dialog.type"
+    :content="dialog.content"
+    @onChangeDialog="setShowDialog"
+  />
 </template>
 
 <script>
 import CardContent from "./CardContent.vue";
+import CustomDialog from "./CustomDialog.vue";
 import { encryptData } from "../services/encrypt";
 import {
   // deleteUserFirebase,
@@ -232,6 +239,7 @@ export default {
   name: "EditAccount",
   components: {
     CardContent,
+    CustomDialog,
   },
   data() {
     return {
@@ -275,6 +283,11 @@ export default {
         (v) => !!v || "กรุณายืนยันรหัสผ่านใหม่",
         (v) => v === this.newPassword || "ยืนยันรหัสผ่านไม่ถูกต้อง",
       ],
+      dialog: {
+        value: false,
+        type: "success",
+        content: "",
+      },
     };
   },
   methods: {
@@ -296,9 +309,14 @@ export default {
         username: this.user.username,
       };
       await updateUserFirebase(this.getUserId, newData);
-      alert("แก้ไขข้อมูลส่วนตัวสำเร็จ");
-      this.$router.back();
-      this.resetForm();
+      this.dialog = {
+        value: true,
+        type: "success",
+        content: "แก้ไขข้อมูลส่วนตัวสำเร็จ",
+      };
+      // alert("แก้ไขข้อมูลส่วนตัวสำเร็จ");
+      // this.$router.back();
+      // this.resetForm();
     },
 
     async updatePassword() {
@@ -308,9 +326,14 @@ export default {
         password: encryptPassword,
       };
       await updateUserFirebase(this.getUserId, newData);
-      alert("เปลี่ยนรหัสผ่านใหม่สำเร็จ");
-      this.$router.back();
-      this.resetForm();
+      this.dialog = {
+        value: true,
+        type: "success",
+        content: "เปลี่ยนรหัสผ่านใหม่สำเร็จ",
+      };
+      // alert("เปลี่ยนรหัสผ่านใหม่สำเร็จ");
+      // this.$router.back();
+      // this.resetForm();
     },
 
     async validateForm() {
@@ -320,12 +343,22 @@ export default {
           this.updateAccount();
         } else {
           if (this.currentPassword !== this.user.password) {
-            alert("รหัสผ่านเดิมไม่ถูกต้อง");
-            this.currentPassword = "";
+            this.dialog = {
+              value: true,
+              type: "warning",
+              content: "รหัสผ่านเดิมไม่ถูกต้อง",
+            };
+            // alert("รหัสผ่านเดิมไม่ถูกต้อง");
+            // this.currentPassword = "";
           } else if (this.newPassword === this.user.password) {
-            alert("กรุณากรอกรหัสผ่านใหม่");
-            this.newPassword = "";
-            this.confirmNewPassword = "";
+            this.dialog = {
+              value: true,
+              type: "warning",
+              content: "กรุณากรอกรหัสผ่านใหม่",
+            };
+            // alert("กรุณากรอกรหัสผ่านใหม่");
+            // this.newPassword = "";
+            // this.confirmNewPassword = "";
           } else {
             this.updatePassword();
           }
@@ -363,11 +396,37 @@ export default {
 
       // //delete account
       // await deleteUserFirebase(this.getUserId);
-
-      alert("ลบบัญชีสำเร็จ");
       this.deleteDialog = false;
-      this.$router.push("/");
-      this.$store.dispatch("userId/logOut");
+      this.dialog = {
+        value: true,
+        type: "success",
+        content: "ลบบัญชีสำเร็จ",
+      };
+
+      // alert("ลบบัญชีสำเร็จ");
+
+      // this.$router.push("/");
+      // this.$store.dispatch("userId/logOut");
+    },
+    setShowDialog(isShow) {
+      this.dialog.value = isShow;
+      if (!isShow) {
+        if (
+          this.dialog.content === "แก้ไขข้อมูลส่วนตัวสำเร็จ" ||
+          this.dialog.content === "เปลี่ยนรหัสผ่านใหม่สำเร็จ"
+        ) {
+          this.$router.back();
+          this.resetForm();
+        } else if (this.dialog.content === "รหัสผ่านเดิมไม่ถูกต้อง") {
+          this.currentPassword = "";
+        } else if (this.dialog.content === "กรุณากรอกรหัสผ่านใหม่") {
+          this.newPassword = "";
+          this.confirmNewPassword = "";
+        } else if (this.dialog.content === "ลบบัญชีสำเร็จ") {
+          this.$router.push("/");
+          this.$store.dispatch("userId/logOut");
+        }
+      }
     },
   },
   computed: {

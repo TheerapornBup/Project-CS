@@ -49,18 +49,25 @@
           </v-btn>
         </div>
       </v-form></template
-    >
-  </CardContent>
+    > </CardContent
+  ><CustomDialog
+    :value="dialog.value"
+    :type="dialog.type"
+    :content="dialog.content"
+    @onChangeDialog="setShowDialog"
+  />
 </template>
 
 <script>
 import CardContent from "./CardContent.vue";
 import { isMatchUserFirebase } from "../services/firebases/users";
 import { encryptData } from "../services/encrypt";
+import CustomDialog from "./CustomDialog.vue";
 export default {
   name: "LogIn",
   components: {
     CardContent,
+    CustomDialog,
   },
   data() {
     return {
@@ -75,6 +82,11 @@ export default {
         (v) =>
           (v && v.length >= 8) || "รหัสผ่านต้องมีความยาวอย่างน้อย 8 ตัวอักษร",
       ],
+      dialog: {
+        value: false,
+        type: "warning",
+        content: "",
+      },
     };
   },
   methods: {
@@ -93,8 +105,13 @@ export default {
       if (valid && this.userId !== null) {
         this.logIn();
       } else {
-        alert("ชื่อผู้ใช้/อีเมล หรือรหัสผ่าน ไม่ถูกต้อง");
-        this.password = "";
+        this.dialog = {
+          value: true,
+          type: "warning",
+          content: "ชื่อผู้ใช้/อีเมล หรือรหัสผ่าน ไม่ถูกต้อง",
+        };
+        //alert("ชื่อผู้ใช้/อีเมล หรือรหัสผ่าน ไม่ถูกต้อง");
+        //this.password = "";
       }
     },
     resetForm() {
@@ -110,6 +127,16 @@ export default {
       // console.log("encryptPassword1: ", encryptPassword1);
       // console.log("encryptPassword2: ", encryptPassword2);
       // console.log("encryptPassword3: ", encryptPassword3);
+    },
+    setShowDialog(isShow) {
+      this.dialog.value = isShow;
+      if (!isShow) {
+        if (
+          this.dialog.content === "ชื่อผู้ใช้/อีเมล หรือรหัสผ่าน ไม่ถูกต้อง"
+        ) {
+          this.password = "";
+        }
+      }
     },
   },
 };

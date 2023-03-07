@@ -199,6 +199,12 @@
       <NoticeChat v-else :notice="notice" />
     </v-dialog>
   </v-card>
+  <CustomDialog
+    :value="dialog.value"
+    :type="dialog.type"
+    :content="dialog.content"
+    @onChangeDialog="setShowDialog"
+  />
 </template>
 
 <script>
@@ -208,6 +214,7 @@ import {
 } from "../services/DateTime";
 import NoticeChat from "./NoticeChat.vue";
 import NoticeDetails from "./NoticeDetails.vue";
+import CustomDialog from "./CustomDialog.vue";
 import { deleteNoticeFirebase } from "../services/firebases/notices";
 import {
   getChatByNoticeIdFirebase,
@@ -221,11 +228,17 @@ export default {
       noticeDialog: false,
       deleteDialog: false,
       chatDialog: false,
+      dialog: {
+        value: false,
+        type: "warning",
+        content: "",
+      },
     };
   },
   components: {
     NoticeChat,
     NoticeDetails,
+    CustomDialog,
   },
   props: {
     notice: {
@@ -253,10 +266,25 @@ export default {
       }
       await deleteChatByNoticeIdFirebase(this.notice.noticeId);
       await deleteNoticeFirebase(this.notice.noticeId);
-      this.$emit("updateNotice");
-      alert("ลบใบประกาศสำเร็จ");
+
       this.deleteDialog = false;
-      this.noticeDialog = false;
+      this.dialog = {
+        value: true,
+        type: "warning",
+        content: "ลบใบประกาศสำเร็จ",
+      };
+      //this.$emit("updateNotice");
+      // alert("ลบใบประกาศสำเร็จ");
+      // this.noticeDialog = false;
+    },
+    setShowDialog(isShow) {
+      this.dialog.value = isShow;
+      if (!isShow) {
+        if (this.dialog.content === "ลบใบประกาศสำเร็จ") {
+          this.noticeDialog = false;
+          this.$emit("updateNotice");
+        }
+      }
     },
   },
   computed: {
