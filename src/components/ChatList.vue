@@ -73,6 +73,11 @@
               :chatId="allChats[selectedChat].chatId"
               :visitorId="allChats[selectedChat].visitorId"
               :notice="allChats[selectedChat].notice"
+              :name="
+                allChats[selectedChat].visitorId === this.getUserId
+                  ? allChats[selectedChat].notice.name
+                  : allChats[selectedChat].visitorName
+              "
               @updateMessage="updateMessage"
               @updateStatus="updateStatus"
               class="noticeChat"
@@ -131,7 +136,7 @@ export default {
       this.selectedTab = tab;
       this.isLoading = true;
       this.selectedChat = 0;
-      await this.getNotices();
+      await this.getChats();
 
       if (tab !== "ทั้งหมด") {
         this.allChats = this.allChats.filter((chat) => {
@@ -142,6 +147,7 @@ export default {
           }
         });
       }
+
       this.isLoading = false;
     },
     getProfileName(chat) {
@@ -150,7 +156,7 @@ export default {
       const n = `${name.charAt(0)}`.toUpperCase();
       return n;
     },
-    async getNotices() {
+    async getChats() {
       this.isLoading = true;
       let chatsList = [];
 
@@ -197,8 +203,25 @@ export default {
         }
       }
 
-      this.allChats = chatsList;
+      this.allChats = chatsList.filter((chat) => chat.messages.length > 0);
+
       this.isLoading = false;
+    },
+    getSelectedChatByChatId() {
+      if (this.$route.query.chatId !== null) {
+        for (let i = 0; i < this.allChats.length; i++) {
+          if (this.allChats[i].chatId === this.$route.query.chatId) {
+            this.selectedChat = i;
+          }
+        }
+      }
+    },
+    async getAllChatsAndSelectedChat(isSelectedChat = true) {
+      this.isVistor = this.$route.params.isVistor === "true";
+      await this.filterNoticeStatus("ทั้งหมด");
+      if (isSelectedChat) {
+        this.getSelectedChatByChatId();
+      }
     },
     getTime(timestamp) {
       const time = convertTimestampToTime(timestamp);
@@ -216,7 +239,6 @@ export default {
         notice: { ...this.allChats[this.selectedChat].notice, status: status },
       };
     },
-
     // matchHeight() {
     //   var heightString = this.$refs.noticeCard.clientHeight;
     //   console.log("h: ", heightString);
@@ -243,18 +265,17 @@ export default {
       this.getMessages();
     },
     "$route.params.isVistor"() {
-      this.isVistor = this.$route.params.isVistor === "true";
-
-      this.filterNoticeStatus("ทั้งหมด");
+      this.getAllChatsAndSelectedChat(false);
+    },
+    "$route.query.chatId"() {
+      this.getAllChatsAndSelectedChat();
     },
   },
   // mounted() {
   //   this.matchHeight();
   // },
   created() {
-    this.isVistor = this.$route.params.isVistor === "true";
-
-    this.filterNoticeStatus("ทั้งหมด");
+    this.getAllChatsAndSelectedChat();
   },
 };
 </script>

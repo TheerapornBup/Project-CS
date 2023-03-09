@@ -1,55 +1,68 @@
 <template>
   <!-- show messages list-->
-  <div class="scroll bg-blueGreen pa-2 h4-th">
-    <div
-      class="ma-0 w-100 d-flex flex-column"
-      v-for="(message, index) in messages"
-      :key="index"
-    >
-      <!-- show message date -->
+  <div
+    class="scroll bg-blueGreen pa-2 h4-th"
+    :class="isLoading === true ? 'd-flex' : ''"
+  >
+    <!-- loading -->
+    <v-progress-circular
+      v-if="isLoading"
+      class="ma-auto"
+      size="50"
+      indeterminate
+      color="whieCream"
+    ></v-progress-circular>
+    <div v-else>
       <div
-        class="text-center mb-2 mt-1"
-        v-if="
-          index === 0 ||
-          getDate(message.dateTime.seconds) !==
-            getDate(messages[index - 1].dateTime.seconds)
-        "
+        class="ma-0 w-100 d-flex flex-column"
+        v-for="(message, index) in messages"
+        :key="index"
       >
-        <v-card class="d-inline pa-1 rounded-pill">{{
-          getDateCard(message.dateTime.seconds)
-        }}</v-card>
-      </div>
-
-      <div
-        class="d-flex mb-2"
-        :class="
-          message.sender === !(getUserId === notice.userId)
-            ? 'flex-row-reverse'
-            : 'flex-row'
-        "
-      >
-        <!-- show avatar  -->
-        <v-avatar
-          v-if="message.sender === (getUserId === notice.userId)"
-          class="bg-whiteCream mr-1 h5-th"
-          size="30"
-          >TH</v-avatar
+        <!-- show message date -->
+        <div
+          class="text-center mb-2 mt-1"
+          v-if="
+            index === 0 ||
+            getDate(message.dateTime.seconds) !==
+              getDate(messages[index - 1].dateTime.seconds)
+          "
         >
-        <!-- show message text -->
-        <v-card
-          class="pa-2 mt-1 rounded-xl"
+          <v-card class="d-inline pa-1 rounded-pill">{{
+            getDateCard(message.dateTime.seconds)
+          }}</v-card>
+        </div>
+
+        <div
+          class="d-flex mb-2"
           :class="
             message.sender === !(getUserId === notice.userId)
-              ? 'rounded-te-0 bg-lightGreen'
-              : 'rounded-ts-0 bg-whiteCream'
+              ? 'flex-row-reverse'
+              : 'flex-row'
           "
-          max-width="50%"
-          >{{ message.text }}
-        </v-card>
-        <!-- show message time -->
-        <p class="align-self-end mx-1 h5-th">
-          {{ getTime(message.dateTime) }}
-        </p>
+        >
+          <!-- show avatar  -->
+          <v-avatar
+            v-if="message.sender === (getUserId === notice.userId)"
+            class="bg-whiteCream mr-1 h5-th"
+            size="30"
+            >{{ name.charAt(0).toUpperCase() }}</v-avatar
+          >
+          <!-- show message text -->
+          <v-card
+            class="pa-2 mt-1 rounded-xl"
+            :class="
+              message.sender === !(getUserId === notice.userId)
+                ? 'rounded-te-0 bg-lightGreen'
+                : 'rounded-ts-0 bg-whiteCream'
+            "
+            max-width="50%"
+            >{{ message.text }}
+          </v-card>
+          <!-- show message time -->
+          <p class="align-self-end mx-1 h5-th">
+            {{ getTime(message.dateTime) }}
+          </p>
+        </div>
       </div>
     </div>
   </div>
@@ -68,6 +81,7 @@
       @click.prevent="sendMessage()"
     ></v-btn>
   </v-sheet>
+
   <!-- <v-btn
     v-if="getUserId === notice.userId && !notice.status && !isSendNotifyNotice"
     block
@@ -79,9 +93,9 @@
       (!isSendNotifyNotice &&
         notice.type === 'ประกาศพบเจอของหาย' &&
         getUserId === notice.userId) ||
-      (notice.type !== 'ประกาศพบเจอของหาย' &&
-        getUserId !== notice.userId &&
-        !isSendNotifyNotice)
+      (!isSendNotifyNotice &&
+        notice.type !== 'ประกาศพบเจอของหาย' &&
+        getUserId !== notice.userId)
     "
     block
     rounded="0"
@@ -89,7 +103,7 @@
   >
     ส่งการยืนยันการคืนของ
     <v-dialog
-      v-model="dialog"
+      v-model="confirmDialog"
       persistent
       activator="parent"
       class="h4-th"
@@ -102,7 +116,7 @@
               icon="mdi-close"
               class="float-end d-inline"
               flat
-              @click="dialog = false"
+              @click="confirmDialog = false"
             ></v-btn>
           </v-col>
         </v-row>
@@ -126,7 +140,7 @@
                 variant="outlined"
                 rounded="pill"
                 block
-                @click="dialog = false"
+                @click="confirmDialog = false"
               >
                 ยกเลิก
               </v-btn>
@@ -144,7 +158,7 @@
   >
     ส่งการยืนยันรับของ
     <v-dialog
-      v-model="dialog"
+      v-model="confirmDialog"
       persistent
       activator="parent"
       class="h4-th"
@@ -157,7 +171,7 @@
               icon="mdi-close"
               class="float-end d-inline"
               flat
-              @click="dialog = false"
+              @click="confirmDialog = false"
             ></v-btn>
           </v-col>
         </v-row>
@@ -181,7 +195,7 @@
                 variant="outlined"
                 rounded="pill"
                 block
-                @click="dialog = false"
+                @click="confirmDialog = false"
               >
                 ยกเลิก
               </v-btn>
@@ -191,9 +205,17 @@
       </v-card>
     </v-dialog>
   </v-btn>
+
+  <CustomDialog
+    :value="dialog.value"
+    :type="dialog.type"
+    :content="dialog.content"
+    @onChangeDialog="setShowDialog"
+  />
 </template>
 
 <script>
+import CustomDialog from "./CustomDialog.vue";
 import { updateNoticeFirebase } from "@/services/firebases/notices";
 import {
   convertTimestampToTime,
@@ -216,6 +238,9 @@ import {
 
 export default {
   name: "ChatMessage",
+  components: {
+    CustomDialog,
+  },
   props: {
     chatId: {
       type: String,
@@ -229,13 +254,24 @@ export default {
       type: Object,
       require,
     },
+    name: {
+      type: String,
+      require,
+    },
   },
   data() {
     return {
       messages: [],
-      dialog: false,
+      confirmDialog: false,
       isSendNotifyNotice: false,
       isReceiveNotifyNotice: false,
+      isLoading: false,
+      text: "",
+      dialog: {
+        value: false,
+        type: "success",
+        content: "",
+      },
     };
   },
   methods: {
@@ -302,9 +338,14 @@ export default {
           ? this.visitorId
           : this.notice.userId
       );
-      alert("ยืนยันการคืนของสำเร็จ");
-      this.dialog = false;
-      this.isSendNotifyNotice = true;
+      this.confirmDialog = false;
+      this.dialog = {
+        value: true,
+        type: "success",
+        content: "ยืนยันการคืนของสำเร็จ",
+      };
+      // alert("ยืนยันการคืนของสำเร็จ");
+      // this.isSendNotifyNotice = true;
     },
     async confirmReceiveItem() {
       await this.sendNotification(
@@ -314,12 +355,17 @@ export default {
           ? this.visitorId
           : this.notice.userId
       );
-      console.log("send noti");
+
       await updateNoticeFirebase(this.notice.noticeId, { status: true });
-      console.log("error");
-      alert("ยืนยันการรับของสำเร็จ");
-      this.$emit("updateStatus", true);
-      this.dialog = false;
+
+      this.confirmDialog = false;
+      this.dialog = {
+        value: true,
+        type: "success",
+        content: "ยืนยันการรับของสำเร็จ",
+      };
+      // alert("ยืนยันการรับของสำเร็จ");
+      // this.$emit("updateStatus", true);
     },
 
     async sendNotificationMessage(type, itemId, userId) {
@@ -354,13 +400,16 @@ export default {
     },
 
     async getIsSendNotifyNotice() {
+      this.isLoading = true;
       const isSend = await isExistNotificationFirebase(
         "รอการยืนยันการรับส่งของ",
         this.chatId
       );
       this.isSendNotifyNotice = isSend;
+      this.isLoading = false;
     },
     async getIsReceiveNotifyNotice() {
+      this.isLoading = true;
       const isReceive = await isMatchNotificationFirebase(
         "รอการยืนยันการรับส่งของ",
         this.chatId,
@@ -368,6 +417,17 @@ export default {
       );
 
       this.isReceiveNotifyNotice = isReceive !== null;
+      this.isLoading = false;
+    },
+    setShowDialog(isShow) {
+      this.dialog.value = isShow;
+      if (!isShow) {
+        if (this.dialog.content === "ยืนยันการคืนของสำเร็จ") {
+          this.isSendNotifyNotice = true;
+        } else if (this.dialog.content === "ยืนยันการรับของสำเร็จ") {
+          this.$emit("updateStatus", true);
+        }
+      }
     },
   },
   computed: {
@@ -398,7 +458,9 @@ export default {
   },
 
   created() {
+    this.isLoading = true;
     this.getMessages();
+    this.isLoading = false;
     this.getIsSendNotifyNotice();
     this.getIsReceiveNotifyNotice();
   },

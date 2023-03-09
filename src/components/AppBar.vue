@@ -213,6 +213,8 @@ export default {
       this.$store.dispatch("userId/logOut");
       this.$router.push("/");
       this.profileMenu = false;
+      this.notificationMenu = false;
+      this.drawer = false;
     },
     editAccount() {
       this.$router.push(`/edit-account`);
@@ -297,7 +299,10 @@ export default {
       return title;
     },
     clickNotification(notification) {
-      this.$router.push(`/chat-list/${notification.item.isVistor}`);
+      this.$router.push({
+        path: `/chat-list/${notification.item.isVistor}`,
+        query: { chatId: notification.itemId },
+      });
       this.notificationMenu = false;
     },
     getTime(timestamp) {
