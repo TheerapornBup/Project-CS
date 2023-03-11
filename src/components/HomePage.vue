@@ -7,18 +7,21 @@
       cover
       width="100%"
     >
-      <v-row class="mt-20">
+      <v-row style="position: relative; top: 40px; z-index: 1">
         <v-col cols="5" offset="1">
           <h1>Physical Center-less Lost and Found System</h1>
-          <p>
-            ระบบที่จะช่วยคุณตามหาสิ่งของที่ทำหายไปได้กว้างไกลมากขึ้นและรวดเร็วขึ้น
-            เนื่องจากศูนย์รวมของหายไม่ได้รวมอยู่ที่เดียว
-            ผู้ที่พบเจอของหายของคุณก็ไม่ต้องเสียเวลา
-            เดินทางนำสิ่งของมาทำเรื่องฝากหาเจ้าของที่ศูนย์
-            เเต่สามารถเก็บไว้กับตัวและประกาศหา เจ้าของได้ด้วยตัวเอง
-            คุณอาจเจอสิ่งของของคุณอยู่ในใบประกาศกำลังรอให้คุณไปรับคืน
-            ในเร็ววันก็เป็นได้
-          </p>
+          <div class="mt-8 d-flex flex-row justify-lg-space-between">
+            <div class="bg-blueGreen" style="width: 20px; height: 160px"></div>
+            <p class="pa-4">
+              ระบบที่จะช่วยคุณตามหาสิ่งของที่ทำหายไปได้กว้างไกลมากขึ้นและรวดเร็วขึ้น
+              เนื่องจากศูนย์รวมของหายไม่ได้รวมอยู่ที่เดียว
+              ผู้ที่พบเจอของหายของคุณก็ไม่ต้องเสียเวลา
+              เดินทางนำสิ่งของมาทำเรื่องฝากหาเจ้าของที่ศูนย์
+              เเต่สามารถเก็บไว้กับตัวและประกาศหา เจ้าของได้ด้วยตัวเอง
+              คุณอาจเจอสิ่งของของคุณอยู่ในใบประกาศกำลังรอให้คุณไปรับคืน
+              ในเร็ววันก็เป็นได้
+            </p>
+          </div>
         </v-col>
       </v-row>
     </v-img>
@@ -46,13 +49,41 @@
         <h2>“ ประเภทสิ่งของ ”</h2>
       </v-col>
 
-      <v-col cols="4" v-for="i in 16" :key="i">
-        <v-avatar size="120">
-          <v-img :src="require('../assets/cosmetics.jpg')" cover></v-img>
-        </v-avatar>
-        <v-card rounded="pill" class="bg-lightBrown py-2">
-          <h3 class="text-center">เครื่องสำอาง</h3>
-        </v-card>
+      <v-col cols="4" v-for="(itemType, index) in itemTypesList" :key="index">
+        <div class="mx-3 my-10">
+          <v-avatar
+            size="120"
+            style="
+              position: absolute;
+              z-index: 2;
+              filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
+            "
+          >
+            <v-img :src="require(`../assets/${itemType.image}`)" cover></v-img>
+          </v-avatar>
+          <v-card
+            rounded="pill"
+            class="bg-lightBrown py-2 itemType"
+            style="position: relative; z-index: 1; top: 35px; left: 30px"
+          >
+            <h3 class="text-center pl-16">{{ itemType.name }}</h3>
+          </v-card>
+          <v-card
+            elevation="0"
+            rounded="xl"
+            class="pa-3 h4-th hide"
+            style="
+              position: relative;
+              top: 35px;
+              left: 30px;
+              background-color: #d5e7e5;
+              width: 80%;
+              float: right;
+            "
+          >
+            {{ itemType.details }}
+          </v-card>
+        </div>
       </v-col>
 
       <!-- process  -->
@@ -109,6 +140,91 @@ export default {
         {
           text: "เมื่อเจอใบประกาศที่ตรงกับความต้องการ สามารถกดปุ่มแชทเพื่อเริ่มการ สนทนาเรื่องการ รับ/ส่งมอบ สิ่งของ",
           color: "bg-lightGreen",
+        },
+      ],
+      itemTypesList: [
+        {
+          image: "shoes.jpg",
+          name: "รองเท้า",
+          details: "รองเท้าผ้าใบ, รองเท้าส้นสูง, รองเท้าแตะ, ฯลฯ",
+        },
+        {
+          image: "clothes.jpg",
+          name: "เสื้อผ้า",
+          details: "เสื้อนอก, เสื้อกันหนาว, กระโปรง, กางเกง, เสื้อยืด, ฯลฯ",
+        },
+        {
+          image: "bags.jpg",
+          name: "กระเป๋า",
+          details: "กระเป๋าสะพาย, กระเป๋าถือ, กระเป๋าสตางค์, ฯลฯ",
+        },
+        {
+          image: "glasses.png",
+          name: "แว่นตา",
+          details: "แว่นสายตา, แว่นกันแดด, ฯลฯ",
+        },
+        {
+          image: "accessories.png",
+          name: "เครื่องประดับ",
+          details:
+            "นาฬิกา, แหวน, กำไล, สร้อย, ต่างหู, เข็มกลัด, กิ๊บติดผม, เข็มขัด, ฯลฯ",
+        },
+        {
+          image: "cosmetics.jpg",
+          name: "เครื่องสำอาง",
+          details: "ลิปสติก, ตลับแป้ง, รองพื้น, ที่ปัดขนตา, แปรงแต่งหน้า, ฯลฯ",
+        },
+        {
+          image: "money.png",
+          name: "เงิน",
+          details: "เงินสด",
+        },
+        {
+          image: "credit-card.png",
+          name: "บัตรสำคัญประจำตัว",
+          details: "บัตรประชาชน, บัตรเครดิต, บัตรเดบิต, ฯลฯ",
+        },
+        {
+          image: "keys.jpg",
+          name: "กุญแจ",
+          details: "กุญแจบ้าน, กุญแจรถ, คีย์การด์, ฯลฯ",
+        },
+        {
+          image: "books.jpg",
+          name: "หนังสือ",
+          details: "หนังสือเรียน, หนังสืออ่านเล่น, เล่มหนังสือทั่วไป, ฯลฯ",
+        },
+        {
+          image: "stationeries.jpg",
+          name: "เครื่องเขียน",
+          details: "สมุด, ดินสอ, ยางลบ, ไม้บรรทัด, กระเป๋าดินสอ, ปากกา, ฯลฯ",
+        },
+        {
+          image: "documents.jpg",
+          name: "เอกสาร",
+          details: "เอกสารปิดผนึกในซอง, ใบรับรอง, ฯลฯ",
+        },
+        {
+          image: "electronics.png",
+          name: "อุปกรณ์อิเล็กทรอนิกส์",
+          details:
+            "โน้ตบุ๊ค, โทรศัพท์, สมาร์ทวอช, หูฟัง/แอร์พอด, แท็ปเล็ต, ฯลฯ",
+        },
+        {
+          image: "medical.png",
+          name: "อุปกรณ์ทางการแพทย์",
+          details: "ยารักษาประจำตัว, คอนแทคเลนส์, รีเทนเนอร์, ฯลฯ",
+        },
+        {
+          image: "camera.jpg",
+          name: "อุปกรณ์ถ่ายภาพ",
+          details:
+            "กล้องถ่ายรูป, เลนส์กล้อง, ขาตั้ง, เมมโมรี่การ์ด, ม้วนฟิล์ม, ฯลฯ",
+        },
+        {
+          image: "sports.jpg",
+          name: "อุปกรณ์กีฬา",
+          details: "ลูกบอล, ไม้เทนนิส, นกหวีด, นาฬิกาจับเวลา, กระบอกน้ำ ฯลฯ",
         },
       ],
     };
@@ -174,5 +290,12 @@ h3 {
   font-weight: 400;
   font-size: 24px;
   line-height: 29px;
+}
+.hide {
+  display: none;
+}
+
+.itemType:hover + .hide {
+  display: block;
 }
 </style>
