@@ -206,7 +206,7 @@ export default {
         {
           title: "เพิ่มประกาศของหาย",
           icon: "mdi-file-plus-outline",
-          route: "/location",
+          route: "/add-notice",
         },
         {
           title: "ประวัติใบประกาศ",
