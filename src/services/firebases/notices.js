@@ -16,7 +16,8 @@ const noticesColRef = collection(db, "notices");
 
 //create
 export async function createNoticeFirebase(notice) {
-  await addDoc(noticesColRef, notice);
+  const noticeData = await addDoc(noticesColRef, notice);
+  return noticeData.id;
 }
 
 //update
