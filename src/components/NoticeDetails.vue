@@ -74,7 +74,7 @@
       </p>
     </v-col>
     <v-col cols="12">
-      <v-img :src="notice.pic" height="100" />
+      <ShowLocation :locationLat="notice.lat" :locationLong="notice.long" />
     </v-col>
 
     <v-col v-if="showStatus" cols="12" class="d-flex align-center">
@@ -93,6 +93,7 @@
 </template>
 
 <script>
+import ShowLocation from "./ShowLocation.vue";
 import {
   convertTimestampToTime,
   convertTimestampToDate,
@@ -100,7 +101,9 @@ import {
 } from "../services/DateTime";
 export default {
   name: "NoticeDetails",
-
+  components: {
+    ShowLocation,
+  },
   props: {
     notice: {
       type: Object,

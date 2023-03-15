@@ -124,7 +124,11 @@
                   </p>
                 </v-col>
                 <v-col cols="12">
-                  <v-img :src="notice.pic" height="170" />
+                  <ShowLocation
+                    :locationLat="notice.lat"
+                    :locationLong="notice.long"
+                    :heightMap="170"
+                  />
                 </v-col>
               </v-row>
             </v-col>
@@ -225,6 +229,7 @@
 </template>
 
 <script>
+import ShowLocation from "./ShowLocation.vue";
 import {
   convertTimestampToTime,
   convertTimestampToDate,
@@ -257,6 +262,7 @@ export default {
     NoticeChat,
     NoticeDetails,
     CustomDialog,
+    ShowLocation,
   },
   props: {
     notice: {

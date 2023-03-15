@@ -71,7 +71,6 @@ export async function getLastestMessageByChatIdFirebase(chatId, sender) {
     limit(1)
   );
   let messagesSnapshot = await getDocs(q);
-  console.log(messagesSnapshot);
 
   let messages = null;
   if (!messagesSnapshot.empty) {

@@ -193,8 +193,8 @@ export default {
       drawer: false,
 
       chatsMenu: [
-        { title: "แชทที่เป็นผู้เริ่มสนทนา", isVistor: true },
-        { title: "แชทที่เป็นผู้ตอบสนทนา", isVistor: false },
+        { title: "แชทผู้ติดต่อใบประกาศ", isVistor: true },
+        { title: "แชทเจ้าของใบประกาศ", isVistor: false },
       ],
 
       items: [
@@ -220,11 +220,11 @@ export default {
   },
   methods: {
     logOut() {
-      this.$store.dispatch("userId/logOut");
-      this.$router.push("/");
       this.profileMenu = false;
       this.notificationMenu = false;
       this.drawer = false;
+      this.$store.dispatch("userId/logOut");
+      this.$router.push("/");
     },
     editAccount() {
       this.$router.push(`/edit-account`);
