@@ -121,7 +121,24 @@
           </v-col>
         </v-row>
         <v-card-title class="text-center"> ยืนยันการส่งคืนของ </v-card-title>
-        <v-card-text>คุณต้องการยืนยันการส่งคืนของหรือไม่</v-card-text>
+        <v-card-text
+          ><p>คุณต้องการยืนยันการส่งคืนของหรือไม่</p>
+          <v-checkbox
+            class="mt-3"
+            v-model="isReward"
+            density="compact"
+            color="mattBlue"
+          >
+            <template v-slot:label>
+              <div>
+                ต้องการรับรางวัล ตาม
+                <router-link to="/reward-law" target="_blank">
+                  กฎหมายการรับสินน้ำใจ
+                </router-link>
+              </div>
+            </template>
+          </v-checkbox></v-card-text
+        >
 
         <v-card-actions class="mt-5">
           <v-row>
@@ -272,6 +289,7 @@ export default {
         type: "success",
         content: "",
       },
+      isReward: false,
     };
   },
   methods: {
@@ -332,7 +350,9 @@ export default {
     },
     async confirmSendItem() {
       await this.sendNotification(
-        "รอการยืนยันการรับส่งของ",
+        this.isReward
+          ? "รอการยืนยันการรับส่งของและให้รางวัล"
+          : "รอการยืนยันการรับส่งของ",
         this.chatId,
         this.notice.userId === this.getUserId
           ? this.visitorId
@@ -469,7 +489,7 @@ export default {
 
 <style scoped>
 .scroll {
-  height: 90%;
+  height: 90vh;
   margin: 0;
   overflow-y: auto;
 }

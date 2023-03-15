@@ -59,6 +59,12 @@ const routes = [
 
     component: () => import("../components/LocationField.vue"),
   },
+  {
+    path: "/reward-law",
+    name: "rewardLaw",
+
+    component: () => import("../components/RewardLaw.vue"),
+  },
 ];
 
 const router = createRouter({
