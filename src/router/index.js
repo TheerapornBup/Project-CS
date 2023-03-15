@@ -65,6 +65,12 @@ const routes = [
 
     component: () => import("../components/RewardLaw.vue"),
   },
+  {
+    path: "/add-notice",
+    name: "add-notice",
+
+    component: () => import("../components/NoticeAdd.vue"),
+  },
 ];
 
 const router = createRouter({
