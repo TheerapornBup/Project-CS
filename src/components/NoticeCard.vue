@@ -130,68 +130,85 @@
             </v-col>
           </v-row>
           <!-- edit notice button -->
-          <v-col cols="12" v-if="notice.userId === getUserId">
-            <v-btn
-              prepend-icon="mdi-file-edit-outline "
-              variant="text"
-              class="h4-th"
-              >แก้ไข</v-btn
-            >
-            <!-- Delete notice button -->
-            <v-btn
-              prepend-icon="mdi-file-remove-outline"
-              class="h4-th"
-              color="error"
-              >ลบ
-              <!-- confirm delete notice dialog -->
-              <v-dialog
-                v-model="deleteDialog"
-                persistent
-                activator="parent"
-                width="auto"
-              >
-                <v-card class="h3-th pa-5">
-                  <v-row no-gutters="true">
-                    <v-col cols="12">
-                      <v-btn
-                        icon="mdi-close"
-                        class="float-end d-inline"
-                        flat
-                        @click="deleteDialog = false"
-                      ></v-btn>
-                    </v-col>
-                  </v-row>
-                  <v-card-text
-                    >คุณแน่ใจหรือไม่ว่าต้องการลบ “ใบประกาศ” นี้?</v-card-text
+          <v-col cols=" 12">
+            <v-row>
+              <v-col cols="6" v-if="notice.userId === getUserId">
+                <v-btn
+                  prepend-icon="mdi-file-edit-outline "
+                  variant="text"
+                  class="h4-th"
+                  >แก้ไข</v-btn
+                >
+                <!-- Delete notice button -->
+                <v-btn
+                  prepend-icon="mdi-file-remove-outline"
+                  class="h4-th"
+                  color="error"
+                  >ลบ
+                  <!-- confirm delete notice dialog -->
+                  <v-dialog
+                    v-model="deleteDialog"
+                    persistent
+                    activator="parent"
+                    width="auto"
                   >
+                    <v-card class="h3-th pa-5">
+                      <v-row no-gutters="true">
+                        <v-col cols="12">
+                          <v-btn
+                            icon="mdi-close"
+                            class="float-end d-inline"
+                            flat
+                            @click="deleteDialog = false"
+                          ></v-btn>
+                        </v-col>
+                      </v-row>
+                      <v-card-text
+                        >คุณแน่ใจหรือไม่ว่าต้องการลบ “ใบประกาศ”
+                        นี้?</v-card-text
+                      >
 
-                  <v-card-actions class="mt-5">
-                    <v-row>
-                      <v-col>
-                        <v-btn
-                          class="bg-error"
-                          rounded="pill"
-                          block
-                          @click="confirmDeleteNotice()"
-                        >
-                          ลบ
-                        </v-btn>
-                      </v-col>
-                      <v-col>
-                        <v-btn
-                          variant="outlined"
-                          rounded="pill"
-                          block
-                          @click="deleteDialog = false"
-                        >
-                          ยกเลิก
-                        </v-btn>
-                      </v-col>
-                    </v-row>
-                  </v-card-actions></v-card
-                ></v-dialog
+                      <v-card-actions class="mt-5">
+                        <v-row>
+                          <v-col>
+                            <v-btn
+                              class="bg-error"
+                              rounded="pill"
+                              block
+                              @click="confirmDeleteNotice()"
+                            >
+                              ลบ
+                            </v-btn>
+                          </v-col>
+                          <v-col>
+                            <v-btn
+                              variant="outlined"
+                              rounded="pill"
+                              block
+                              @click="deleteDialog = false"
+                            >
+                              ยกเลิก
+                            </v-btn>
+                          </v-col>
+                        </v-row>
+                      </v-card-actions></v-card
+                    ></v-dialog
+                  >
+                </v-btn></v-col
               >
-            </v-btn>
+              <v-col cols="6" v-if="showStatus" class="d-flex align-center">
+                <!-- remaining day notice -->
+                <div class="h5-th flex-grow-1">
+                  อายุของใบประกาศ : {{ getRemainingDays() }} วัน
+                </div>
+                <!-- notice status -->
+                <v-card
+                  class="text-center rounded-pill pa-1 float-end d-inline h5-th"
+                  :class="notice.status ? 'bg-success' : 'bg-warning'"
+                  >{{ notice.status ? "เสร็จสิ้นแล้ว" : "ยังไม่ดำเนินการ" }}
+                </v-card>
+              </v-col>
+            </v-row>
           </v-col>
         </v-card></v-container
       >
@@ -211,6 +228,7 @@
 import {
   convertTimestampToTime,
   convertTimestampToDate,
+  diffDate,
 } from "../services/DateTime";
 import NoticeChat from "./NoticeChat.vue";
 import NoticeDetails from "./NoticeDetails.vue";
@@ -258,6 +276,11 @@ export default {
     getTime(timestamp) {
       const time = convertTimestampToTime(timestamp);
       return time;
+    },
+    getRemainingDays() {
+      const days = diffDate(this.notice.createDateTime.seconds);
+      const remainingDays = 90 - days;
+      return remainingDays;
     },
     async confirmDeleteNotice() {
       let chatsList = await getChatByNoticeIdFirebase(this.notice.noticeId);

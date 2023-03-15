@@ -12,7 +12,7 @@
     <v-row v-else>
       <!-- search -->
       <v-col cols="12">
-        <v-card class="rounded-pill border-card"
+        <v-card class="rounded-pill border-card bg-mattBlue px-5"
           ><v-row class="pt-6" justify="center" align="center">
             <!-- select notice type -->
             <v-col>
@@ -65,8 +65,21 @@
 
 <script>
 import NoticeCard from "./NoticeCard.vue";
-import { getNoticesFirebase } from "../services/firebases/notices";
+import {
+  deleteNoticeFirebase,
+  getNoticesFirebase,
+} from "../services/firebases/notices";
 import { getNameByIdFirebase } from "../services/firebases/users";
+import { diffDate } from "@/services/DateTime";
+import {
+  createNotificationFirebase,
+  isExistNotificationFirebase,
+} from "@/services/firebases/notifications";
+import {
+  deleteChatByNoticeIdFirebase,
+  getChatByNoticeIdFirebase,
+} from "@/services/firebases/chats";
+import { deleteMessageByChatIdFirebase } from "@/services/firebases/messages";
 export default {
   name: "NoticeSearch",
   components: {
@@ -84,15 +97,53 @@ export default {
   },
   methods: {
     async getNotices() {
-      const noticesList = [];
+      let noticesList = [];
       this.isLoading = true;
       const notices = await getNoticesFirebase();
+
       for (let index in notices) {
         const name = await getNameByIdFirebase(notices[index].userId);
         noticesList.push({ ...notices[index], name: name });
       }
+
+      this.checkNoticeExpire(noticesList);
+
+      //show notice that status = false
+      noticesList = noticesList.filter((notice) => !notice.status);
+
       this.isLoading = false;
       this.notices = noticesList;
+    },
+    async checkNoticeExpire(noticesList) {
+      noticesList.forEach(async (notice) => {
+        const days = diffDate(notice.createDateTime.seconds);
+        const remainingDays = 90 - days;
+
+        if (remainingDays <= 0) {
+          // expire notice -> delete notice chat message
+          let chatsList = await getChatByNoticeIdFirebase(this.notice.noticeId);
+          for (let index in chatsList) {
+            await deleteMessageByChatIdFirebase(chatsList[index].chatId);
+          }
+          await deleteChatByNoticeIdFirebase(this.notice.noticeId);
+          await deleteNoticeFirebase(this.notice.noticeId);
+        } else if (remainingDays <= 10) {
+          // closed expire notice -> send notification
+          const isSend = await isExistNotificationFirebase(
+            "ใบประกาศใกล้หมดอายุ",
+            notice.noticeId
+          );
+          if (!isSend) {
+            const notification = {
+              userId: notice.userId,
+              itemId: notice.noticeId,
+              type: "ใบประกาศใกล้หมดอายุ",
+              dateTime: new Date(),
+            };
+            await createNotificationFirebase(notification);
+          }
+        }
+      });
     },
   },
   created() {

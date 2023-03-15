@@ -1,8 +1,17 @@
+import moment from "moment/moment";
+
 export function convertTimestampToDate(seconds) {
   return Intl.DateTimeFormat("th-TH", {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
+  }).format(seconds * 1000);
+}
+export function convertTimestampToDDMMYY(seconds) {
+  return Intl.DateTimeFormat("th-TH", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "2-digit",
   }).format(seconds * 1000);
 }
 export function convertTimestampToTime(seconds) {
@@ -30,4 +39,11 @@ export function isYesterday(date) {
     return true;
   }
   return false;
+}
+
+export function diffDate(seconds) {
+  const start = moment(seconds * 1000);
+  const now = moment();
+  const diff = now.diff(start, "days");
+  return diff;
 }

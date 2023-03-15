@@ -24,7 +24,7 @@
         </v-btn>
       </template>
 
-      <v-card min-width="300" class="h4-th overflow-y-auto">
+      <v-card min-width="300" max-height="200" class="h4-th overflow-y-auto">
         <v-list>
           <!-- profile information -->
           <v-list-item
@@ -44,7 +44,9 @@
             }}</v-list-item-subtitle>
             <template v-slot:append v-if="notification.type === 'ข้อความ'">
               <p class="h5-th">
-                {{ getTime(notification.item.dateTime.seconds) }}
+                {{
+                  getDateTimeNotification(notification.item.dateTime.seconds)
+                }}
               </p>
             </template>
           </v-list-item>
@@ -120,7 +122,11 @@
   </v-app-bar>
 
   <!-- navigation drawer -->
-  <v-navigation-drawer v-model="drawer" class="bg-lightGreen h4-th">
+  <v-navigation-drawer
+    v-model="drawer"
+    class="bg-lightGreen h4-th"
+    disable-resize-watcher
+  >
     <v-list class="pt-0">
       <v-list-item
         v-for="item in items"
@@ -164,7 +170,11 @@ import { getNotificationsByUserIdFirebase } from "../services/firebases/notifica
 import { getLastestMessageByChatIdFirebase } from "../services/firebases/messages";
 import { getNoticeByIdFirebase } from "../services/firebases/notices";
 import { getChatByIdFirebase } from "@/services/firebases/chats";
-import { convertTimestampToTime } from "@/services/DateTime";
+import {
+  convertTimestampToDDMMYY,
+  convertTimestampToTime,
+  isToday,
+} from "@/services/DateTime";
 export default {
   name: "AppBar",
 
@@ -199,7 +209,7 @@ export default {
           route: "/location",
         },
         {
-          title: "ประวัติใบประกาศที่เคยสร้าง",
+          title: "ประวัติใบประกาศ",
           icon: "mdi-history",
           route: "/history",
         },
@@ -265,6 +275,9 @@ export default {
           } else {
             name = await getNameByIdFirebase(chat.visitorId);
           }
+        } else if (notification.type === "ใบประกาศใกล้หมดอายุ") {
+          item = await getNoticeByIdFirebase(notification.itemId);
+          name = await getNameByIdFirebase(item.userId);
         }
         notificationsList[i]["item"] = {
           ...item,
@@ -287,7 +300,7 @@ export default {
       return icon;
     },
     getTitleNotification(type, item) {
-      let title = "";
+      let title = type;
       if (type === "ข้อความ") {
         title = item.text;
       } else if (
@@ -299,15 +312,27 @@ export default {
       return title;
     },
     clickNotification(notification) {
-      this.$router.push({
-        path: `/chat-list/${notification.item.isVistor}`,
-        query: { chatId: notification.itemId },
-      });
+      if (notification.type !== "ใบประกาศใกล้หมดอายุ") {
+        this.$router.push({
+          path: `/chat-list/${notification.item.isVistor}`,
+          query: { chatId: notification.itemId },
+        });
+      } else {
+        this.$router.push({
+          path: `/history`,
+        });
+      }
+
       this.notificationMenu = false;
     },
-    getTime(timestamp) {
-      const time = convertTimestampToTime(timestamp);
-      return time;
+
+    getDateTimeNotification(timestamp) {
+      const date = new Date(timestamp * 1000);
+      if (isToday(date)) {
+        return convertTimestampToTime(timestamp);
+      } else {
+        return convertTimestampToDDMMYY(timestamp);
+      }
     },
   },
 

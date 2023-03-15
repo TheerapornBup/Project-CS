@@ -76,10 +76,15 @@
     <v-col cols="12">
       <v-img :src="notice.pic" height="100" />
     </v-col>
-    <!-- notice status -->
-    <v-col v-if="showStatus" cols="12"
-      ><v-card
-        class="text-whiteCream text-center rounded-pill pa-1 float-end d-inline h5-th"
+
+    <v-col v-if="showStatus" cols="12" class="d-flex align-center">
+      <!-- remaining day notice -->
+      <div class="h5-th flex-grow-1">
+        อายุของใบประกาศ : {{ getRemainingDays() }} วัน
+      </div>
+      <!-- notice status -->
+      <v-card
+        class="text-center rounded-pill pa-1 float-end d-inline h5-th"
         :class="notice.status ? 'bg-success' : 'bg-warning'"
         >{{ notice.status ? "เสร็จสิ้นแล้ว" : "ยังไม่ดำเนินการ" }}
       </v-card>
@@ -91,9 +96,11 @@
 import {
   convertTimestampToTime,
   convertTimestampToDate,
+  diffDate,
 } from "../services/DateTime";
 export default {
   name: "NoticeDetails",
+
   props: {
     notice: {
       type: Object,
@@ -116,6 +123,11 @@ export default {
     getTime(timestamp) {
       const time = convertTimestampToTime(timestamp);
       return time;
+    },
+    getRemainingDays() {
+      const days = diffDate(this.notice.createDateTime.seconds);
+      const remainingDays = 90 - days;
+      return remainingDays;
     },
   },
 };

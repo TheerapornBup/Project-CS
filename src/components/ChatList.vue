@@ -54,7 +54,7 @@
                     <p class="h5-th">
                       {{
                         chat.messages.length > 0
-                          ? getTime(
+                          ? getDateTimeChat(
                               chat.messages[chat.messages.length - 1].dateTime
                                 .seconds
                             )
@@ -110,7 +110,11 @@ import {
   getChatByVisitorIdFirebase,
 } from "../services/firebases/chats";
 import { getMessageByChatIdFirebase } from "../services/firebases/messages";
-import { convertTimestampToTime } from "../services/DateTime";
+import {
+  convertTimestampToDDMMYY,
+  convertTimestampToTime,
+  isToday,
+} from "../services/DateTime";
 import ChatMessage from "./ChatMessage.vue";
 import TabBar from "./TabBar.vue";
 export default {
@@ -203,7 +207,11 @@ export default {
         }
       }
 
-      this.allChats = chatsList.filter((chat) => chat.messages.length > 0);
+      chatsList = chatsList.filter((chat) => chat.messages.length > 0);
+
+      chatsList.sort(this.compareDateTime);
+
+      this.allChats = chatsList;
 
       this.isLoading = false;
     },
@@ -223,9 +231,13 @@ export default {
         this.getSelectedChatByChatId();
       }
     },
-    getTime(timestamp) {
-      const time = convertTimestampToTime(timestamp);
-      return time;
+    getDateTimeChat(timestamp) {
+      const date = new Date(timestamp * 1000);
+      if (isToday(date)) {
+        return convertTimestampToTime(timestamp);
+      } else {
+        return convertTimestampToDDMMYY(timestamp);
+      }
     },
     updateMessage(messages) {
       this.allChats[this.selectedChat] = {
@@ -238,6 +250,19 @@ export default {
         ...this.allChats[this.selectedChat],
         notice: { ...this.allChats[this.selectedChat].notice, status: status },
       };
+    },
+    compareDateTime(a, b) {
+      const dateTimeA =
+        a.messages.length > 0 ? a.messages[a.messages.length - 1].dateTime : 0;
+      const dateTimeB =
+        b.messages.length > 0 ? b.messages[b.messages.length - 1].dateTime : 0;
+      if (dateTimeA < dateTimeB) {
+        return 1;
+      }
+      if (dateTimeA > dateTimeB) {
+        return -1;
+      }
+      return 0;
     },
     // matchHeight() {
     //   var heightString = this.$refs.noticeCard.clientHeight;
