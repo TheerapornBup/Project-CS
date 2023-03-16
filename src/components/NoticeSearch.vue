@@ -11,12 +11,13 @@
 
     <v-row v-else>
       <!-- search -->
-      <v-col cols="12">
+      <v-col cols="12" class="overlap">
         <v-card
           class="rounded-pill border-card bg-mattBlue px-5"
           style="overflow: visible"
           ><v-row class="pt-6" justify="center" align="center">
             <!-- select notice type -->
+            <v-col cols="1"></v-col>
             <v-col>
               <v-select
                 v-model="selectedNoticeType"
@@ -43,9 +44,11 @@
                 append-inner-icon="mdi-map-marker-radius"
                 @click:append-inner="locationHandle()"
                 variant="solo"
+                style="width:350px;"
                 v-model="selectedLocation"
-              ></v-text-field
-              ><v-card
+              ></v-text-field>
+
+              <v-card
                 v-show="mapCard"
                 rounded="lg"
                 class="bg-grey card-map"
@@ -72,11 +75,13 @@
                       lng: locationLong,
                     }"
                   />
-                </GMapMap> </v-card
-            ></v-col>
+                </GMapMap> 
+              </v-card>
+
+              </v-col>
 
             <!-- select date time -->
-            <v-col class="py-0">
+            <v-col class="py-0 date-input">
               <VueDatePicker v-model="selectedDateTime"></VueDatePicker>
             </v-col>
             <!-- search button -->
@@ -364,5 +369,22 @@ export default {
 }
 .v-input__details {
   border-radius: 40px;
+}
+.overlap{
+  z-index: 100;
+  position: relative;
+}
+.date-input{
+  position: relative;
+  top: -10px;
+}
+.dp__input_icon{
+  left: 172px;
+}
+.dp__clear_icon{
+  right: 25px;
+}
+.dp__input_icon_pad{
+  padding-left: 17px;
 }
 </style>
