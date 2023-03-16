@@ -131,7 +131,7 @@
       <v-list-item
         v-for="item in items"
         :key="item"
-        :to="item.route"
+        @click="clickMenu(item.route)"
         :value="item"
         :title="item.title"
         :prepend-icon="item.icon"
@@ -153,7 +153,9 @@
           :key="i"
           :value="chat.title"
           :title="chat.title"
-          :to="{ name: 'chatList', params: { isVistor: chat.isVistor } }"
+          @click="
+            clickMenu({ name: 'chatList', params: { isVistor: chat.isVistor } })
+          "
           style="background-color: #e5c2a3"
         ></v-list-item
       ></v-list-group>
@@ -220,15 +222,13 @@ export default {
   },
   methods: {
     logOut() {
-      this.profileMenu = false;
-      this.notificationMenu = false;
-      this.drawer = false;
+      this.closeAllPopup();
       this.$store.dispatch("userId/logOut");
       this.$router.push("/");
     },
     editAccount() {
       this.$router.push(`/edit-account`);
-      this.profileMenu = false;
+      this.closeAllPopup();
     },
     async getUser() {
       const user = await getUserByIdFirebase(this.getUserId);
@@ -323,7 +323,16 @@ export default {
         });
       }
 
+      this.closeAllPopup();
+    },
+    clickMenu(path) {
+      this.$router.push(path);
+      this.closeAllPopup();
+    },
+    closeAllPopup() {
+      this.profileMenu = false;
       this.notificationMenu = false;
+      this.drawer = false;
     },
 
     getDateTimeNotification(timestamp) {
