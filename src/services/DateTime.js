@@ -45,5 +45,14 @@ export function diffDate(seconds) {
   const start = moment(seconds * 1000);
   const now = moment();
   const diff = now.diff(start, "days");
+
   return diff;
+}
+
+export function diffMilliseconds(dateTime1, dateTime2) {
+  const start = moment(dateTime1);
+  const end = moment(dateTime2 * 1000);
+  const diff = end.diff(start);
+
+  return Math.abs(diff);
 }
