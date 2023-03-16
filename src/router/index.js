@@ -71,6 +71,12 @@ const routes = [
 
     component: () => import("../components/NoticeAdd.vue"),
   },
+  {
+    path: "/edit-notice",
+    name: "edit-notice",
+
+    component: () => import("../components/NoticeEdit.vue"),
+  },
 ];
 
 const router = createRouter({

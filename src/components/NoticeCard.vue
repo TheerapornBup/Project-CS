@@ -141,6 +141,7 @@
                   prepend-icon="mdi-file-edit-outline "
                   variant="text"
                   class="h4-th"
+                  @click="$router.push('edit-notice')"
                   >แก้ไข</v-btn
                 >
                 <!-- Delete notice button -->
