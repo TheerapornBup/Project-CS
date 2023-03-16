@@ -1,23 +1,28 @@
 <template>
   <v-container>
-    <div class="card">
-      <v-row>
-        <v-col cols="1"> </v-col>
-        <v-col cols="3" class="mt-3">
-          <v-text class="topic">ประเภทของใบประกาศ</v-text>
-        </v-col>
-        <v-col cols="4">
-          <v-checkbox
-            label="ประกาศตามหาของหาย"
+    <div class="add-notice-card rounded-xl h4-th">
+      <v-row no-gutters>
+        <v-col cols="6" class="pt-0"
+          ><v-list-item
+            :class="
+              type === 'ประกาศตามหาของหาย' ? 'bg-blueGreen' : 'bg-whiteCream'
+            "
+            class="text-center rounded-ts-xl h4-th py-4"
+            title="ประกาศตามหาของหาย"
             @click="setSelectedMenu('ประกาศตามหาของหาย')"
-          ></v-checkbox>
-        </v-col>
-        <v-col cols="4">
-          <v-checkbox
-            label="ประกาศพบเจอของหาย"
+          ></v-list-item
+        ></v-col>
+
+        <v-col cols="6" class="pt-0"
+          ><v-list-item
+            :class="
+              type === 'ประกาศพบเจอของหาย' ? 'bg-blueGreen' : 'bg-whiteCream'
+            "
+            class="text-center rounded-te-xl h4-th py-4"
+            title="ประกาศพบเจอของหาย"
             @click="setSelectedMenu('ประกาศพบเจอของหาย')"
-          ></v-checkbox>
-        </v-col>
+          ></v-list-item
+        ></v-col>
       </v-row>
 
       <div class="pt-5">
@@ -46,7 +51,7 @@
                           type="file"
                           accept="image/*"
                           @change="previewImage"
-                          class="form-control-file"
+                          class="form-control-file h4-th"
                           id="my-file"
                         />
                       </v-col>
@@ -94,10 +99,14 @@
                 </v-col>
 
                 <v-col cols="5" md="4">
-                  <v-text class="topic">สถานที่ที่เกี่ยวข้อง</v-text>
+                  <v-text class="topic">{{
+                    type === "ประกาศตามหาของหาย"
+                      ? "สถานที่ทำของหาย"
+                      : "สถานที่ที่พบของหาย"
+                  }}</v-text>
                   <v-text-field
                     class="mt-3"
-                    append-inner-icon="mdi-map-marker"
+                    append-inner-icon="mdi-map-marker-radius"
                     @click:append-inner="mapCard = !mapCard"
                     variant="solo"
                     v-model="locationAddress"
@@ -132,7 +141,11 @@
               <v-row>
                 <v-col cols="1"></v-col>
                 <v-col cols="6">
-                  <v-text class="topic">รายละเอียดของหาย</v-text>
+                  <v-text class="topic">{{
+                    type === "ประกาศตามหาของหาย"
+                      ? "รายละเอียดของหายที่ตามหา"
+                      : "รายละเอียดของหายที่พบ"
+                  }}</v-text>
                   <v-textarea
                     class="mt-3"
                     variant="solo"
@@ -140,7 +153,11 @@
                   ></v-textarea>
                 </v-col>
                 <v-col cols="4">
-                  <v-text class="topic">วันที่ทำของหาย หรือพบเจอของหาย</v-text>
+                  <v-text class="topic">{{
+                    type === "ประกาศตามหาของหาย"
+                      ? "วันเวลาที่คาดว่าของหาย"
+                      : "วันเวลาที่พบของหาย"
+                  }}</v-text>
                   <VueDatePicker
                     v-model="dateTime"
                     class="mt-3"
@@ -153,12 +170,14 @@
               <v-row>
                 <v-col cols="4"></v-col>
                 <v-col cols="2">
-                  <v-btn class="save-btn mt-2" @click="addNotice()"
+                  <v-btn class="save-btn mt-2 h4-th" @click="addNotice()"
                     >ลงประกาศ</v-btn
                   >
                 </v-col>
                 <v-col cols="2">
-                  <v-btn class="discard-btn mt-2">ยกเลิก</v-btn>
+                  <v-btn class="discard-btn mt-2 h4-th text-whiteCream"
+                    >ยกเลิก</v-btn
+                  >
                 </v-col>
                 <v-col cols="4"></v-col>
               </v-row>
@@ -416,16 +435,20 @@ export default {
   border-radius: 40px;
 }
 
-.card {
+.add-notice-card {
   width: 912px;
   height: auto;
   background: #358787;
   margin: auto;
   box-shadow: 0px 8px 16px 8px rgba(0, 0, 0, 0.25);
-  border-radius: 20px;
 }
 
 .topic {
+  font-family: "Noto Serif Thai";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 26px;
   color: #eae7e6;
 }
 
