@@ -79,7 +79,7 @@
                 <v-col cols="12">
                   <p>ประเภทของหาย : {{ notice.itemType }}</p> </v-col
                 ><!-- notice detail -->
-                <v-col cols="12">
+                <v-col cols="12" v-if="notice.detail !== ''">
                   <p>
                     {{
                       notice.type === "ประกาศตามหาของหาย"
@@ -141,7 +141,7 @@
                   prepend-icon="mdi-file-edit-outline "
                   variant="text"
                   class="h4-th"
-                  @click="$router.push('edit-notice')"
+                  @click="$router.push(`/edit-notice/${notice.noticeId}`)"
                   >แก้ไข</v-btn
                 >
                 <!-- Delete notice button -->

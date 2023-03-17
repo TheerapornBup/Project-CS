@@ -72,7 +72,7 @@ const routes = [
     component: () => import("../components/NoticeAdd.vue"),
   },
   {
-    path: "/edit-notice",
+    path: "/edit-notice/:id",
     name: "edit-notice",
 
     component: () => import("../components/NoticeEdit.vue"),

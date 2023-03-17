@@ -25,7 +25,7 @@
       <p>ประเภทของหาย : {{ notice.itemType }}</p>
     </v-col>
     <!-- notice detail -->
-    <v-col v-if="showDetail" cols="12">
+    <v-col v-if="showDetail && notice.detail !== ''" cols="12">
       <p>
         {{
           notice.type === "ประกาศตามหาของหาย"
@@ -34,10 +34,6 @@
         }}
         :
       </p>
-      <p>{{ notice.detail }}</p>
-      <p>{{ notice.detail }}</p>
-      <p>{{ notice.detail }}</p>
-      <p>{{ notice.detail }}</p>
       <p>{{ notice.detail }}</p>
     </v-col>
     <!-- notice date -->

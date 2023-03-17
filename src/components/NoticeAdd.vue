@@ -31,32 +31,24 @@
             <div class="row">
               <div class="">
                 <form>
-                  <div class="form-group">
-                    <v-row>
-                      <v-col cols="4"></v-col>
-                      <v-col cols="4" style="text-align: center">
-                        <div class="border" style="width: 210px; height: 210px">
-                          <v-row>
-                            <v-col cols="12">
-                              <template v-if="preview">
-                                <img
-                                  :src="preview"
-                                  style="width: 200px; height: 200px"
-                                />
-                              </template>
-                            </v-col>
-                          </v-row>
-                        </div>
-                        <input
-                          type="file"
-                          accept="image/*"
-                          @change="previewImage"
-                          class="form-control-file h4-th"
-                          id="my-file"
-                        />
-                      </v-col>
-                      <v-col cols="4"></v-col>
-                    </v-row>
+                  <div
+                    class="form-group d-flex flex-column justify-center align-center"
+                  >
+                    <template v-if="preview">
+                      <img :src="preview" style="height: 200px" />
+                    </template>
+                    <div
+                      v-else
+                      class="border"
+                      style="width: 30%; height: 200px"
+                    ></div>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      @change="previewImage"
+                      class="form-control-file h4-th mt-2"
+                      id="my-file"
+                    />
                   </div>
                 </form>
               </div>
@@ -65,7 +57,7 @@
             </div>
           </div>
 
-          <v-form v-model="valid">
+          <v-form ref="form">
             <v-container>
               <v-row>
                 <v-col cols="1"></v-col>
@@ -95,6 +87,7 @@
                       'อุปกรณ์ทางการแพทย์',
                       'รองเท้า',
                     ]"
+                    :rules="itemTypeRules"
                   ></v-select>
                 </v-col>
 
@@ -110,6 +103,7 @@
                     @click:append-inner="mapCard = !mapCard"
                     variant="solo"
                     v-model="locationAddress"
+                    :rules="locationRules"
                   ></v-text-field
                 ></v-col>
                 <div v-show="mapCard">
@@ -162,6 +156,8 @@
                     v-model="dateTime"
                     class="mt-3"
                     variant="solo"
+                    :max-date="new Date()"
+                    :clearable="false"
                   ></VueDatePicker>
                   <v-col cols="1"></v-col>
                 </v-col>
@@ -170,12 +166,14 @@
               <v-row>
                 <v-col cols="4"></v-col>
                 <v-col cols="2">
-                  <v-btn class="save-btn mt-2 h4-th" @click="addNotice()"
+                  <v-btn class="save-btn mt-2 h4-th" @click.prevent="addNotice"
                     >ลงประกาศ</v-btn
                   >
                 </v-col>
                 <v-col cols="2">
-                  <v-btn class="discard-btn mt-2 h4-th text-whiteCream"
+                  <v-btn
+                    class="discard-btn mt-2 h4-th text-whiteCream"
+                    @click="cancelButton()"
                     >ยกเลิก</v-btn
                   >
                 </v-col>
@@ -222,18 +220,15 @@ export default {
       locationLat: 0,
       locationLong: 0,
       locationAddress: "",
-      error: "",
 
       preview: null,
       image: null,
       preview_list: [],
       image_list: [],
 
-      createDateTime: new Date(),
-      dateTime: null,
+      dateTime: new Date(),
       detail: "",
       itemType: "",
-      pic: "",
       pathpic: "",
 
       defautPic: {
@@ -260,6 +255,13 @@ export default {
         type: "success",
         content: "",
       },
+
+      itemTypeRules: [(v) => !!v || "กรุณาเลือกประเภทของหาย"],
+      locationRules: [
+        (v) =>
+          (!!v && this.locationLat !== 0 && this.locationLong !== 0) ||
+          "กรุณาเลือกสถานที่",
+      ],
     };
   },
   created() {
@@ -276,6 +278,7 @@ export default {
       if (!isShow) {
         if (this.dialog.content === "สร้างประกาศสำเร็จ") {
           this.$router.push("/search");
+          this.reset();
         }
       }
     },
@@ -302,35 +305,44 @@ export default {
       // console.log("ประเภทประกาศ ทดลองกด >>"+menu);
     },
 
+    cancelButton() {
+      this.$router.push("/search");
+      this.reset();
+    },
+
     // ADD 'Notice' in to Friebase
     async addNotice() {
-      const notice = {
-        type: this.type,
-        detail: this.detail,
-        itemType: this.itemType,
-        dateTime: this.dateTime,
-        createDateTime: this.createDateTime,
-        status: false,
-        userId: this.getUserId,
-        lat: this.locationLat,
-        long: this.locationLong,
-      };
-      console.log(notice);
-      const noticeId = await createNoticeFirebase(notice);
-      if (this.image == null) {
-        this.pathpic = this.defautPic[this.itemType];
-      } else {
-        this.pathpic = noticeId + ".jpg";
-        await this.uploadPic();
-      }
+      const { valid } = await this.$refs.form.validate();
 
-      const picture = await this.downloadPic();
-      await updateNoticeFirebase(noticeId, { pic: picture });
-      this.dialog = {
-        value: true,
-        type: "success",
-        content: "สร้างประกาศสำเร็จ",
-      };
+      if (valid) {
+        const notice = {
+          type: this.type,
+          detail: this.detail,
+          itemType: this.itemType,
+          dateTime: this.dateTime,
+          createDateTime: new Date(),
+          status: false,
+          userId: this.getUserId,
+          lat: this.locationLat,
+          long: this.locationLong,
+        };
+        console.log(notice);
+        const noticeId = await createNoticeFirebase(notice);
+        if (this.image == null) {
+          this.pathpic = this.defautPic[this.itemType];
+        } else {
+          this.pathpic = noticeId + ".jpg";
+          await this.uploadPic();
+        }
+
+        const picture = await this.downloadPic();
+        await updateNoticeFirebase(noticeId, { pic: picture });
+        this.dialog = {
+          value: true,
+          type: "success",
+          content: "สร้างประกาศสำเร็จ",
+        };
+      }
     },
 
     // About 'Location'
@@ -425,12 +437,29 @@ export default {
       this.preview = null;
       this.image_list = [];
       this.preview_list = [];
+      this.pathpic = "";
+
+      this.type = "ประกาศตามหาของหาย";
+      this.mapCard = false;
+      this.locationLat = 0;
+      this.locationLong = 0;
+      this.locationAddress = "";
+      this.dateTime = new Date();
+      this.itemType = "";
+      this.detail = "";
     },
   },
 };
 </script>
 
 <style>
+.v-messages {
+  font-family: "Noto Serif Thai";
+  font-weight: 700;
+  font-size: 16px;
+  font-style: bold;
+}
+
 .v-field {
   border-radius: 40px;
 }
@@ -512,5 +541,28 @@ export default {
   margin-top: 40px !important;
   height: 220px;
   width: 25% !important;
+}
+
+input[type="file"] {
+  width: 30%;
+  max-width: 30%;
+  color: #444;
+  background: #f1f1f1;
+  border-radius: 8px;
+}
+input[type="file"]::file-selector-button {
+  margin-right: 20px;
+  border: none;
+  background: #a6d2cd;
+  padding: 5px 10px;
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+  color: black;
+  cursor: pointer;
+  transition: background 0.2s ease-in-out;
+}
+
+input[type="file"]::file-selector-button:hover {
+  background: #95c3bd;
 }
 </style>
