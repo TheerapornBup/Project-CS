@@ -44,7 +44,7 @@
                 append-inner-icon="mdi-map-marker-radius"
                 @click:append-inner="locationHandle()"
                 variant="solo"
-                style="width:350px;"
+                style="width: 350px"
                 v-model="selectedLocation"
               ></v-text-field>
 
@@ -75,14 +75,16 @@
                       lng: locationLong,
                     }"
                   />
-                </GMapMap> 
+                </GMapMap>
               </v-card>
-
-              </v-col>
+            </v-col>
 
             <!-- select date time -->
             <v-col class="py-0 date-input">
-              <VueDatePicker v-model="selectedDateTime"></VueDatePicker>
+              <VueDatePicker
+                v-model="selectedDateTime"
+                :max-date="new Date()"
+              ></VueDatePicker>
             </v-col>
             <!-- search button -->
             <v-col>
@@ -116,8 +118,6 @@
 </template>
 
 <script>
-import VueDatePicker from "@vuepic/vue-datepicker";
-import "@vuepic/vue-datepicker/dist/main.css";
 import NoticeCard from "./NoticeCard.vue";
 import {
   deleteNoticeFirebase,
@@ -139,7 +139,6 @@ export default {
   name: "NoticeSearch",
   components: {
     NoticeCard,
-    VueDatePicker,
   },
   data() {
     return {
@@ -370,21 +369,21 @@ export default {
 .v-input__details {
   border-radius: 40px;
 }
-.overlap{
+.overlap {
   z-index: 100;
   position: relative;
 }
-.date-input{
+.date-input {
   position: relative;
   top: -10px;
 }
-.dp__input_icon{
+.dp__input_icon {
   left: 172px;
 }
-.dp__clear_icon{
+.dp__clear_icon {
   right: 25px;
 }
-.dp__input_icon_pad{
+.dp__input_icon_pad {
   padding-left: 17px;
 }
 </style>

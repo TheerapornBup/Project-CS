@@ -199,8 +199,6 @@
 </template>
 
 <script>
-import VueDatePicker from "@vuepic/vue-datepicker";
-import "@vuepic/vue-datepicker/dist/main.css";
 import CustomDialog from "./CustomDialog.vue";
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 import { uploadBytes } from "firebase/storage";
@@ -214,7 +212,6 @@ import {
 export default {
   name: "NoticeEdit",
   components: {
-    VueDatePicker,
     CustomDialog,
   },
   data() {
