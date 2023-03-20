@@ -1,138 +1,164 @@
 <template>
-  <CardContent>
-    <template v-slot:content-left>
-      <!-- register title -->
-      <label class="title">REGISTER</label>
-
-      <v-form class="log-in-form" ref="form">
-        <div class="log-in-group-field">
-          <!-- first name text field -->
-          <div class="log-in-field">
-            <label class="h4-th">ชื่อ</label>
-            <v-text-field
-              bg-color="lightWhite"
-              density="compact"
-              variant="solo"
-              v-model.trim="firstName"
-              :rules="nameRules"
-            />
-          </div>
-
-          <!-- last name text field -->
-          <div class="log-in-field">
-            <label class="h4-th">นามสกุล</label>
-            <v-text-field
-              bg-color="lightWhite"
-              density="compact"
-              variant="solo"
-              v-model.trim="lastName"
-              :rules="nameRules"
-            />
-          </div>
-
-          <!-- email text field -->
-          <div class="log-in-field">
-            <label class="h4-th">อีเมล</label>
-            <v-text-field
-              type="email"
-              bg-color="lightWhite"
-              density="compact"
-              variant="solo"
-              v-model.trim="email"
-              :rules="emailRules"
-            />
-          </div>
-        </div>
-
-        <!-- <v-divider thickness="3" color="whiteCream"></v-divider> -->
-
-        <!-- username text field -->
-        <div class="log-in-group-field">
-          <div class="log-in-field">
-            <label class="h4-th">ชื่อผู้ใช้</label>
-            <v-text-field
-              bg-color="lightWhite"
-              density="compact"
-              variant="solo"
-              v-model.trim="username"
-              :rules="usernameRules"
-            />
-          </div>
-
-          <!-- password text field -->
-          <div class="log-in-field">
-            <label class="h4-th">รหัสผ่าน</label>
-            <v-text-field
-              :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-              :type="showPassword ? 'text' : 'password'"
-              @click:append-inner="toggleShowPassword"
-              bg-color="lightWhite"
-              density="compact"
-              variant="solo"
-              v-model.trim="password"
-              :rules="passwordRules"
-            />
-          </div>
-
-          <!-- confirm password text field -->
-          <div class="log-in-field">
-            <label class="h4-th">ยืนยันรหัสผ่าน</label>
-            <v-text-field
-              :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-              :type="showPassword ? 'text' : 'password'"
-              @click:append-inner="toggleShowPassword"
-              bg-color="lightWhite"
-              density="compact"
-              variant="solo"
-              v-model.trim="confirmPassword"
-              :rules="confirmPasswordRules"
-            />
-          </div>
-        </div>
-
-        <!-- policy checkbox -->
-        <div class="log-in-field">
-          <v-checkbox
-            class="checkbox-text"
-            v-model="isAgree"
-            density="compact"
-            :rules="checkboxRules"
-          >
-            <template v-slot:label>
-              <div>
-                ฉันได้อ่าน และ อนุมัติ
-                <router-link to="/policy-terms">
-                  ข้อกำหนดในการให้บริการและนโยบายความเป็นส่วนตัวแล้ว
-                </router-link>
-              </div>
-            </template>
-          </v-checkbox>
-        </div>
-
-        <!-- create account button -->
-        <div class="log-in-field log-in-group-field">
-          <v-btn
-            class="bg-lightGreen text-black btn h4-th"
-            rounded
-            block
-            @click.prevent="validateForm"
-          >
-            สร้างบัญชี
-          </v-btn>
-        </div>
-      </v-form>
-    </template>
-  </CardContent>
-  <CustomDialog
-    :value="dialog.value"
-    :type="dialog.type"
-    :content="dialog.content"
-    @onChangeDialog="setShowDialog"
-  />
+  <v-form ref="form">
+    <v-row class="pt-5">
+      <v-col cols="3"></v-col>
+      <v-col cols="6">
+         <!--cardbox-->
+          <v-card class="card-register">
+            <v-card-text>
+              <v-row class="card-head">
+                <v-col cols="4"></v-col>
+                <v-col cols="4" style="text-align: center;">
+                  <!-- register title -->
+                  <label class="title-regist add-on-title">REGISTER</label> 
+                </v-col>
+                <v-col cols="4"></v-col>
+              </v-row>
+  
+              <v-row>
+                <v-col cols="1"></v-col>
+                <v-col cols="5" class="pt-15">
+                   <!-- first name text field -->
+                    <label class="h4-th">ชื่อ</label>
+                    <v-text-field
+                      bg-color="lightWhite"
+                      density="compact"
+                      variant="solo"
+                      v-model.trim="firstName"
+                      :rules="nameRules"
+                    />
+                    
+                </v-col>
+                <v-col cols="5" class="pt-15">
+                  <!-- last name text field -->
+                  <label class="h4-th">นามสกุล</label>
+                  <v-text-field
+                    bg-color="lightWhite"
+                    density="compact"
+                    variant="solo"
+                    v-model.trim="lastName"
+                    :rules="lastNameRules"
+                  />
+                </v-col>
+              </v-row>
+  
+              <v-row>
+                <v-col cols="1"></v-col>
+                <v-col cols="5">
+                  <!-- email text field -->
+                  
+                    <label class="h4-th">อีเมล</label>
+                    <v-text-field
+                      type="email"
+                      bg-color="lightWhite"
+                      density="compact"
+                      variant="solo"
+                      v-model.trim="email"
+                      :rules="emailRules"
+                    />
+                 
+                </v-col>
+                <v-col cols="5">
+                  <!-- username text field -->       
+                    <label class="h4-th">ชื่อผู้ใช้</label>
+                    <v-text-field
+                      bg-color="lightWhite"
+                      density="compact"
+                      variant="solo"
+                      v-model.trim="username"
+                      :rules="usernameRules"
+                    />
+                  
+                </v-col>
+                <v-col cols="1"></v-col>
+              </v-row>
+  
+              <v-row>
+                <v-col cols="1"></v-col>
+                <v-col cols="5">
+                  <!-- password text field -->
+                  <label class="h4-th">รหัสผ่าน</label>
+                  <v-text-field
+                    :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                    :type="showPassword ? 'text' : 'password'"
+                    @click:append-inner="toggleShowPassword"
+                    bg-color="lightWhite"
+                    density="compact"
+                    variant="solo"
+                    v-model.trim="password"
+                    :rules="passwordRules"
+                  />
+                </v-col>
+                <v-col cols="5">
+                  <!-- confirm password text field -->
+                  <label class="h4-th">ยืนยันรหัสผ่าน</label>
+                  <v-text-field
+                    :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                    :type="showPassword ? 'text' : 'password'"
+                    @click:append-inner="toggleShowPassword"
+                    bg-color="lightWhite"
+                    density="compact"
+                    variant="solo"
+                    v-model.trim="confirmPassword"
+                    :rules="confirmPasswordRules"
+                  />
+                </v-col>
+                <v-col cols="1"></v-col>
+              </v-row>
+              
+              <v-row>
+                <v-col cols="1"></v-col>
+                <v-col cols="10" class="">
+                  <!-- policy checkbox -->
+                  <v-checkbox
+                  class="checkbox-text"
+                  v-model="isAgree"
+                  density="compact"
+                  :rules="checkboxRules"
+                >
+                  <template v-slot:label>
+                    <div>
+                      ฉันได้อ่าน และ อนุมัติ
+                      <router-link to="/policy-terms">
+                        ข้อกำหนดในการให้บริการและนโยบายความเป็นส่วนตัวแล้ว
+                      </router-link>
+                    </div>
+                  </template>
+                </v-checkbox>
+                </v-col>
+              </v-row>
+  
+              <v-row>
+                <v-col cols="4"></v-col>
+                <v-col cols="4" class="pt-5">
+                  <!-- create account button -->
+                  <v-btn
+                    class="bg-lightGreen text-black btn-register h4-th"
+                    rounded
+                    block
+                    @click.prevent="validateForm"
+                  >
+                    สร้างบัญชี
+                  </v-btn>
+                </v-col>
+                <v-col cols="4"></v-col>
+              </v-row>
+  
+            </v-card-text>
+          </v-card>
+      </v-col>
+      <v-col cols="3"></v-col>
+    </v-row>
+  </v-form>
+    <CustomDialog
+      :value="dialog.value"
+      :type="dialog.type"
+      :content="dialog.content"
+      @onChangeDialog="setShowDialog"
+    />
 </template>
 
 <script>
-import CardContent from "./CardContent.vue";
 import CustomDialog from "./CustomDialog.vue";
 
 import { encryptData } from "../services/encrypt";
@@ -144,7 +170,6 @@ import {
 export default {
   name: "CreateAccount",
   components: {
-    CardContent,
     CustomDialog,
   },
   data() {
@@ -271,7 +296,11 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
+.v-field {
+  border-radius: 40px !important;
+}
+
 .title {
   font-family: "Playfair Display";
   font-style: normal;
@@ -282,7 +311,28 @@ export default {
   text-align: center;
 }
 
-.log-in-form {
+.add-on-title{
+  top: 50px;
+  background-color: #EAE7E6;
+  position: relative;
+  padding: 1px 16px 5px;
+  border-radius: 50px;
+}
+
+.card-register{
+  background: #EAE7E6;
+  box-shadow: 0px 8px 16px 8px rgba(0, 0, 0, 0.25);
+  border-radius: 20px;
+  height: auto;
+  }
+
+.card-head{
+  background-color: #358787;
+  margin: -20px;
+  height: 95px;
+}
+
+/*.log-in-form {
   width: 90%;
 }
 
@@ -293,7 +343,7 @@ export default {
 
 .log-in-field {
   margin-bottom: 10px;
-}
+}*/
 
 .checkbox-text {
   font-family: "Noto Serif Thai";
@@ -303,11 +353,11 @@ export default {
   line-height: 18px;
 }
 
-.v-text-field {
+/*.v-text-field {
   height: 40px;
-}
+}*/
 
-.btn {
+.btn-register {
   height: 40px;
   margin-top: 0px;
 }

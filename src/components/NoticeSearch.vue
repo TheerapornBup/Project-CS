@@ -18,7 +18,7 @@
           ><v-row class="pt-6" justify="center" align="center">
             <!-- select notice type -->
             <v-col cols="1"></v-col>
-            <v-col>
+            <v-col cols="2">
               <v-select
                 v-model="selectedNoticeType"
                 :items="noticeTypes"
@@ -28,7 +28,7 @@
               ></v-select>
             </v-col>
             <!-- select item type -->
-            <v-col>
+            <v-col cols="2">
               <v-select
                 v-model="selectedItemType"
                 :items="itemTypes"
@@ -38,13 +38,13 @@
               ></v-select>
             </v-col>
             <!-- select location -->
-            <v-col>
+            <v-col cols="3">
               <v-text-field
                 density="compact"
                 append-inner-icon="mdi-map-marker-radius"
                 @click:append-inner="locationHandle()"
                 variant="solo"
-                style="width: 350px"
+               
                 v-model="selectedLocation"
               ></v-text-field>
 
@@ -80,20 +80,19 @@
             </v-col>
 
             <!-- select date time -->
-            <v-col class="py-0 date-input">
+            <v-col cols="2" class="py-0 date-input">
               <VueDatePicker
                 v-model="selectedDateTime"
                 :max-date="new Date()"
               ></VueDatePicker>
             </v-col>
             <!-- search button -->
-            <v-col>
+            <v-col cols="2">
               <v-btn class="bg-blueGreen mb-5 h5-th" @click="search()"
-                >ค้นหา</v-btn
-              >
-            </v-col></v-row
-          ></v-card
-        >
+                >ค้นหา</v-btn>
+            </v-col>
+            </v-row>
+            </v-card>
       </v-col>
 
       <!-- notice card -->
@@ -361,7 +360,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 .border-card {
   border: 2px solid #358787;
   box-shadow: 0px 8px 16px 8px rgba(0, 0, 0, 0.25);
@@ -376,8 +375,9 @@ export default {
 .date-input {
   position: relative;
   top: -10px;
+  border-radius: 40px;
 }
-.dp__input_icon {
+/*.dp__input_icon {
   left: 172px;
 }
 .dp__clear_icon {
@@ -385,5 +385,5 @@ export default {
 }
 .dp__input_icon_pad {
   padding-left: 17px;
-}
+}*/
 </style>

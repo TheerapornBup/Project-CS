@@ -60,8 +60,9 @@
             </div>
           </div>
 
-          <v-form ref="form">
-            <v-container>
+          <!--cardbox---->
+          <v-form ref="form" class="pt-5">
+            <v-container class="add-notice-box">
               <v-row>
                 <v-col cols="1"></v-col>
                 <v-col cols="6">
@@ -161,30 +162,32 @@
                     variant="solo"
                     :max-date="new Date()"
                     :clearable="false"
+                    style="width: 230px;"
                   ></VueDatePicker>
                   <v-col cols="1"></v-col>
                 </v-col>
               </v-row>
 
+
+            </v-container>
               <v-row>
                 <v-col cols="4"></v-col>
                 <v-col cols="2">
                   <v-btn
-                    class="save-btn mt-2 h4-th"
+                    class="save-btn mt-4 h4-th"
                     @click.prevent="updateNotice()"
                     >บันทึก</v-btn
                   >
                 </v-col>
                 <v-col cols="2">
                   <v-btn
-                    class="discard-btn mt-2 h4-th text-whiteCream"
+                    class="discard-btn mt-4 h4-th text-whiteCream"
                     @click="cancelButton()"
                     >ยกเลิก</v-btn
                   >
                 </v-col>
                 <v-col cols="4"></v-col>
-              </v-row>
-            </v-container>
+              </v-row>            
           </v-form>
         </v-card-text>
       </div>
@@ -435,11 +438,11 @@ export default {
 </script>
 
 <style>
-.v-field {
+/*.v-field {
   border-radius: 40px;
-}
+}*/
 
-.add-notice-card {
+/*.add-notice-card {
   width: 912px;
   height: auto;
   background: #358787;
@@ -538,5 +541,5 @@ input[type="file"]::file-selector-button {
 
 input[type="file"]::file-selector-button:hover {
   background: #95c3bd;
-}
+}*/
 </style>
