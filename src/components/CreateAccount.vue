@@ -15,6 +15,7 @@
               variant="solo"
               v-model.trim="firstName"
               :rules="nameRules"
+              autofocus="true"
             />
           </div>
 

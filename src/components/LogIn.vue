@@ -12,6 +12,7 @@
             variant="solo"
             v-model="username"
             :rules="usernameRules"
+            autofocus="true"
           />
         </div>
         <div class="log-in-field">
