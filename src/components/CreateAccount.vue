@@ -184,6 +184,7 @@ export default {
       showPassword: false,
 
       nameRules: [(v) => !!v || "กรุณากรอกชื่อ"],
+      lastNameRules: [(v) => !!v || "กรุณากรอกนามสกุล"],
       emailRules: [
         (v) => !!v || "กรุณากรอกอีเมล",
         (v) =>
@@ -301,7 +302,7 @@ export default {
   border-radius: 40px !important;
 }
 
-.title {
+.title-regist {
   font-family: "Playfair Display";
   font-style: normal;
   font-weight: 400;

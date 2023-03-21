@@ -510,7 +510,7 @@ export default {
 }
 
 .dp__input_icon {
-  left: 210px;
+  left: 180px;
   top: 52%;
 }
 

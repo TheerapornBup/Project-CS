@@ -143,6 +143,20 @@ export default {
 </script>
 
 <style>
+.dp__input {
+  border-radius: 40px !important;
+  height: 45px !important;
+}
+
+.dp__input_icon {
+  left: 180px;
+  top: 52%;
+}
+
+.dp__clear_icon {
+  top: 52%;
+  right: 60px;
+}
 .v-field {
   border-radius: 40px;
 }
