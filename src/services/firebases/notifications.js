@@ -34,7 +34,7 @@ export async function getNotificationByIdFirebase(id) {
 }
 
 export async function getNotificationsFirebase() {
-  const q = query(notificationsColRef, orderBy("createDateTime", "desc"));
+  const q = query(notificationsColRef, orderBy("dateTime", "desc"));
   const notificationsSnapshot = await getDocs(q);
   const notifications = [];
   notificationsSnapshot.forEach((notification) => {
@@ -47,10 +47,10 @@ export async function getNotificationsFirebase() {
   return notifications;
 }
 
-export async function getNotificationsByUserIdFirebase(userId) {
+export async function getNotificationsByReceiverFirebase(receiver) {
   const q = query(
     notificationsColRef,
-    where("userId", "==", userId),
+    where("receiver", "==", receiver),
     orderBy("dateTime", "desc")
   );
   const notificationsSnapshot = await getDocs(q);
@@ -71,8 +71,8 @@ export async function deleteNotificationFirebase(id) {
   await deleteDoc(notificationRef);
 }
 
-export async function deleteNotificationByUserIdFirebase(userId) {
-  const q = query(notificationsColRef, where("userId", "==", userId));
+export async function deleteNotificationByItemIdFirebase(itemId) {
+  const q = query(notificationsColRef, where("itemId", "==", itemId));
   let notificationsSnapshot = await getDocs(q);
   notificationsSnapshot.forEach(async (notification) => {
     await deleteDoc(notification.ref);
@@ -91,20 +91,26 @@ export async function isExistNotificationFirebase(type, itemId) {
   return notificationsSnapshot.data().count > 0;
 }
 
-export async function isMatchNotificationFirebase(type, itemId, userId) {
-  let notificationId = null;
+export async function getMatchNotificationFirebase(type, itemId, receiver) {
+  let notification = null;
   const q = query(
     notificationsColRef,
     where("type", "==", type),
     where("itemId", "==", itemId),
-    where("userId", "==", userId)
+    where("receiver", "==", receiver)
   );
   let notificationsSnapshot = await getDocs(q);
 
   if (!notificationsSnapshot.empty) {
-    notificationsSnapshot.forEach((notification) => {
-      notificationId = notification.id;
+    notificationsSnapshot.forEach((noti) => {
+      const notificationData = noti.data();
+
+      notification = {
+        ...notificationData,
+        notificationId: noti.id,
+      };
     });
   }
-  return notificationId;
+
+  return notification;
 }

@@ -38,15 +38,25 @@
                 }}</v-icon></v-avatar
               >
             </template>
-            <v-list-item-title> {{ notification.item.name }}</v-list-item-title>
-            <v-list-item-subtitle>{{
-              getTitleNotification(notification.type, notification.item)
-            }}</v-list-item-subtitle>
-            <template v-slot:append v-if="notification.type === 'ข้อความ'">
+            <v-list-item-title>
+              {{
+                notification.type === "report user"
+                  ? "ถูกรายงานบัญชี"
+                  : notification.type === "expire soon"
+                  ? notification.text
+                  : notification.senderName
+              }}</v-list-item-title
+            >
+            <v-list-item-subtitle
+              v-if="
+                notification.type !== 'report user' &&
+                notification.type !== 'expire soon'
+              "
+              >{{ notification.text }}</v-list-item-subtitle
+            >
+            <template v-slot:append v-if="notification.type === 'message'">
               <p class="h5-th">
-                {{
-                  getDateTimeNotification(notification.item.dateTime.seconds)
-                }}
+                {{ getDateTimeNotification(notification.dateTime.seconds) }}
               </p>
             </template>
           </v-list-item>
@@ -168,9 +178,8 @@ import {
   getUserByIdFirebase,
   getNameByIdFirebase,
 } from "../services/firebases/users";
-import { getNotificationsByUserIdFirebase } from "../services/firebases/notifications";
+import { getNotificationsByReceiverFirebase } from "../services/firebases/notifications";
 import { getLastestMessageByChatIdFirebase } from "../services/firebases/messages";
-import { getNoticeByIdFirebase } from "../services/firebases/notices";
 import { getChatByIdFirebase } from "@/services/firebases/chats";
 import {
   convertTimestampToDDMMYY,
@@ -240,90 +249,61 @@ export default {
       return name;
     },
     async getNotifications() {
-      const notificationsList = await getNotificationsByUserIdFirebase(
+      const notificationsList = await getNotificationsByReceiverFirebase(
         this.getUserId
       );
       for (let i in notificationsList) {
-        const notification = notificationsList[i];
-        let item = {};
-        let name = "";
-        let isVistor = true;
-        if (notification.type === "ข้อความ") {
-          const chat = await getChatByIdFirebase(notification.itemId);
-          item = await getLastestMessageByChatIdFirebase(
-            notification.itemId,
-            notification.userId !== chat.visitorId
-          );
-          isVistor = chat.visitorId === this.getUserId;
+        let notification = notificationsList[i];
+        notification.senderName = await getNameByIdFirebase(
+          notification.sender
+        );
 
-          if (item.sender) {
-            name = await getNameByIdFirebase(chat.visitorId);
-          } else {
-            const notice = await getNoticeByIdFirebase(chat.noticeId);
-            name = await getNameByIdFirebase(notice.userId);
-          }
+        if (notification.type === "message") {
+          const chat = await getChatByIdFirebase(notification.itemId);
+          const item = await getLastestMessageByChatIdFirebase(
+            notification.itemId,
+            notification.receiver !== chat.visitorId
+          );
+          notification.dateTime = item.dateTime;
+          notification.isVistor = chat.visitorId === this.getUserId;
         } else if (
-          notification.type === "รอการยืนยันการรับส่งของ" ||
-          notification.type === "ยืนยันการรับส่งของสำเร็จ"
+          notification.type === "wait confirm receipt" ||
+          notification.type === "confirm receipt"
         ) {
           const chat = await getChatByIdFirebase(notification.itemId);
-          item = await getNoticeByIdFirebase(chat.noticeId);
-          isVistor = chat.visitorId === this.getUserId;
 
-          if (isVistor) {
-            name = await getNameByIdFirebase(item.userId);
-          } else {
-            name = await getNameByIdFirebase(chat.visitorId);
-          }
-        } else if (notification.type === "ใบประกาศใกล้หมดอายุ") {
-          item = await getNoticeByIdFirebase(notification.itemId);
-          name = await getNameByIdFirebase(item.userId);
+          notification.isVistor = chat.visitorId === this.getUserId;
         }
-        notificationsList[i]["item"] = {
-          ...item,
-          name: name,
-          isVistor: isVistor,
-        };
+        notificationsList[i] = notification;
       }
       this.notifications = notificationsList;
     },
     getIconNotification(type) {
-      let icon = "mdi-file-clock-outline";
-      if (type === "ข้อความ") {
+      let icon = "mdi-account-alert";
+      if (type === "message") {
         icon = "mdi-forum-outline";
-      } else if (
-        type === "รอการยืนยันการรับส่งของ" ||
-        type === "ยืนยันการรับส่งของสำเร็จ"
-      ) {
+      } else if (type === "wait confirm receipt") {
+        icon = "mdi-package-variant";
+      } else if (type === "confirm receipt") {
         icon = "mdi-package-variant-closed";
+      } else if (type === "expire soon") {
+        icon = "mdi-file-clock-outline";
       }
       return icon;
     },
-    getTitleNotification(type, item) {
-      let title = type;
-      if (type === "ข้อความ") {
-        title = item.text;
-      } else if (
-        type === "รอการยืนยันการรับส่งของ" ||
-        type === "ยืนยันการรับส่งของสำเร็จ"
-      ) {
-        title = type;
-      }
-      return title;
-    },
     clickNotification(notification) {
-      if (notification.type !== "ใบประกาศใกล้หมดอายุ") {
-        this.$router.push({
-          path: `/chat-list/${notification.item.isVistor}`,
-          query: { chatId: notification.itemId },
-        });
-      } else {
+      if (notification.type === "expire soon") {
         this.$router.push({
           path: `/history`,
         });
+        this.closeAllPopup();
+      } else if (notification.type !== "report user") {
+        this.$router.push({
+          path: `/chat-list/${notification.isVistor}`,
+          query: { chatId: notification.itemId },
+        });
+        this.closeAllPopup();
       }
-
-      this.closeAllPopup();
     },
     clickMenu(path) {
       this.$router.push(path);

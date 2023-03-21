@@ -1,4 +1,267 @@
 <template>
+  <!-- app bar -->
+  <v-sheet class="h-15 d-flex bg-cream align-center px-2">
+    <!-- confirm send item button -->
+    <v-btn
+      v-if="
+        (!isSendNotifyNotice &&
+          notice.type === 'ประกาศพบเจอของหาย' &&
+          getUserId === notice.userId) ||
+        (!isSendNotifyNotice &&
+          notice.type !== 'ประกาศพบเจอของหาย' &&
+          getUserId !== notice.userId)
+      "
+      class="bg-mattBlue text-center h4-th"
+      rounded="md"
+      :disabled="isReport"
+    >
+      ส่งการยืนยันการคืนของ
+      <v-dialog
+        v-model="confirmDialog"
+        persistent
+        activator="parent"
+        class="h4-th"
+        width="auto"
+      >
+        <v-card class="h4-th pa-5">
+          <v-row no-gutters="true">
+            <v-col cols="12">
+              <v-btn
+                icon="mdi-close"
+                class="float-end d-inline"
+                flat
+                @click="confirmDialog = false"
+              ></v-btn>
+            </v-col>
+          </v-row>
+          <v-card-title class="text-center"> ยืนยันการส่งคืนของ </v-card-title>
+          <v-card-text
+            ><p>คุณต้องการยืนยันการส่งคืนของหรือไม่</p>
+            <v-checkbox
+              class="mt-3"
+              v-model="isReward"
+              density="compact"
+              color="mattBlue"
+            >
+              <template v-slot:label>
+                <div>
+                  ต้องการรับรางวัล ตาม
+                  <router-link to="/reward-law" target="_blank">
+                    กฎหมายการรับสินน้ำใจ
+                  </router-link>
+                </div>
+              </template>
+            </v-checkbox></v-card-text
+          >
+
+          <v-card-actions class="mt-5">
+            <v-row>
+              <v-col>
+                <v-btn
+                  class="bg-mattBlue"
+                  rounded="pill"
+                  block
+                  @click="confirmSendItem()"
+                >
+                  ยืนยัน
+                </v-btn>
+              </v-col>
+              <v-col>
+                <v-btn
+                  variant="outlined"
+                  rounded="pill"
+                  block
+                  @click="confirmDialog = false"
+                >
+                  ยกเลิก
+                </v-btn>
+              </v-col>
+            </v-row>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </v-btn>
+
+    <!-- confirm receive item button -->
+    <v-btn
+      v-if="receiveNotifyNotice !== null && !notice.status"
+      rounded="md"
+      class="bg-mattBlue text-center h4-th"
+      :disabled="isReport"
+    >
+      ส่งการยืนยันรับของ{{
+        receiveNotifyNotice.text === "รอการยืนยันการรับส่งของและให้ค่าตอบแทน"
+          ? "และให้ค่าตอบแทน"
+          : ""
+      }}
+      <v-dialog
+        v-model="confirmDialog"
+        persistent
+        activator="parent"
+        class="h4-th"
+        width="auto"
+      >
+        <v-card class="h4-th pa-5">
+          <v-row no-gutters="true">
+            <v-col cols="12">
+              <v-btn
+                icon="mdi-close"
+                class="float-end d-inline"
+                flat
+                @click="confirmDialog = false"
+              ></v-btn>
+            </v-col>
+          </v-row>
+          <v-card-title class="text-center">
+            ยืนยันการรับของ{{
+              receiveNotifyNotice.text ===
+              "รอการยืนยันการรับส่งของและให้ค่าตอบแทน"
+                ? "และให้ค่าตอบแทน"
+                : ""
+            }}
+          </v-card-title>
+          <v-card-text
+            >คุณต้องการยืนยันการรับของ{{
+              receiveNotifyNotice.text ===
+              "รอการยืนยันการรับส่งของและให้ค่าตอบแทน"
+                ? "และให้ค่าตอบแทน"
+                : ""
+            }}หรือไม่</v-card-text
+          >
+
+          <v-card-actions class="mt-5">
+            <v-row>
+              <v-col>
+                <v-btn
+                  class="bg-mattBlue"
+                  rounded="pill"
+                  block
+                  @click="confirmReceiveItem()"
+                >
+                  ยืนยัน
+                </v-btn>
+              </v-col>
+              <v-col>
+                <v-btn
+                  variant="outlined"
+                  rounded="pill"
+                  block
+                  @click="confirmDialog = false"
+                >
+                  ยกเลิก
+                </v-btn>
+              </v-col>
+            </v-row>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </v-btn>
+
+    <v-spacer></v-spacer>
+
+    <!-- more button -->
+    <v-menu
+      v-model="moreMenu"
+      :close-on-content-click="false"
+      location="bottom right"
+      :disabled="isReport"
+    >
+      <template v-slot:activator="{ props }">
+        <v-btn variant="plain" icon="mdi-dots-vertical" v-bind="props"></v-btn>
+      </template>
+
+      <v-card class="h4-th">
+        <!-- report user button -->
+        <v-list-item
+          prepend-icon="mdi-account-alert"
+          title="รายงานบัญชี"
+          class="pointer"
+        >
+          <v-dialog
+            v-model="reportDialog"
+            persistent
+            activator="parent"
+            class="h4-th"
+            width="auto"
+          >
+            <v-card class="h4-th pa-5">
+              <v-row no-gutters="true">
+                <v-col cols="12">
+                  <v-btn
+                    icon="mdi-close"
+                    class="float-end d-inline"
+                    flat
+                    @click="
+                      reportDialog = false;
+                      moreMenu = false;
+                    "
+                  ></v-btn>
+                </v-col>
+              </v-row>
+              <v-card-title class="text-center"> รายงานบัญชี </v-card-title>
+              <!-- select issue user -->
+              <v-card-text>
+                <v-form ref="form">
+                  <p class="mb-3">รายละเอียดปัญหาของบัญชีผู้ใช้นี้</p>
+                  <v-radio-group
+                    v-model="issue"
+                    :rules="[(v) => !!v || 'กรุณาเลือกรายละเอียด']"
+                    color="mattBlue"
+                  >
+                    <v-radio label="สแปม" value="สแปม"></v-radio>
+                    <v-radio
+                      v-if="notice.type === 'ประกาศพบเจอของหาย'"
+                      label="ไม่ให้ค่าตอบแทนตามที่ตกลง"
+                      value="ไม่ให้ค่าตอบแทนตามที่ตกลง"
+                    ></v-radio>
+                    <v-radio
+                      v-if="notice.type === 'ประกาศพบเจอของหาย'"
+                      label="ไม่ใช่เจ้าของของหาย"
+                      value="ไม่ใช่เจ้าของของหาย"
+                    ></v-radio>
+                    <v-radio
+                      v-if="notice.type !== 'ประกาศพบเจอของหาย'"
+                      label="ไม่ได้ของคืน"
+                      value="ไม่ได้ของคืน"
+                    ></v-radio>
+                  </v-radio-group>
+                </v-form>
+              </v-card-text>
+
+              <v-card-actions class="mt-5">
+                <v-row>
+                  <v-col>
+                    <v-btn
+                      class="bg-mattBlue"
+                      rounded="pill"
+                      block
+                      @click="confirmReportUser()"
+                    >
+                      ยืนยัน
+                    </v-btn>
+                  </v-col>
+                  <v-col>
+                    <v-btn
+                      variant="outlined"
+                      rounded="pill"
+                      block
+                      @click="
+                        reportDialog = false;
+                        moreMenu = false;
+                      "
+                    >
+                      ยกเลิก
+                    </v-btn>
+                  </v-col>
+                </v-row>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+        </v-list-item>
+      </v-card>
+    </v-menu>
+  </v-sheet>
+
   <!-- show messages list-->
   <div
     class="scroll bg-blueGreen pa-2 h4-th"
@@ -73,155 +336,17 @@
       class="flex-grow-1 px-2 h4-th"
       variant="plain"
       v-model.trim="text"
+      autofocus="true"
+      :disabled="isReport"
     ></v-text-field>
     <!-- send button -->
     <v-btn
       class="bg-mattBlue mr-2"
       icon="mdi-send"
       @click.prevent="sendMessage()"
+      :disabled="isReport"
     ></v-btn>
   </v-sheet>
-
-  <!-- <v-btn
-    v-if="getUserId === notice.userId && !notice.status && !isSendNotifyNotice"
-    block
-    rounded="0"
-    class="bg-mattBlue text-center h4-th"
-  > -->
-  <v-btn
-    v-if="
-      (!isSendNotifyNotice &&
-        notice.type === 'ประกาศพบเจอของหาย' &&
-        getUserId === notice.userId) ||
-      (!isSendNotifyNotice &&
-        notice.type !== 'ประกาศพบเจอของหาย' &&
-        getUserId !== notice.userId)
-    "
-    block
-    rounded="0"
-    class="bg-mattBlue text-center h4-th"
-  >
-    ส่งการยืนยันการคืนของ
-    <v-dialog
-      v-model="confirmDialog"
-      persistent
-      activator="parent"
-      class="h4-th"
-      width="auto"
-    >
-      <v-card class="h4-th pa-5">
-        <v-row no-gutters="true">
-          <v-col cols="12">
-            <v-btn
-              icon="mdi-close"
-              class="float-end d-inline"
-              flat
-              @click="confirmDialog = false"
-            ></v-btn>
-          </v-col>
-        </v-row>
-        <v-card-title class="text-center"> ยืนยันการส่งคืนของ </v-card-title>
-        <v-card-text
-          ><p>คุณต้องการยืนยันการส่งคืนของหรือไม่</p>
-          <v-checkbox
-            class="mt-3"
-            v-model="isReward"
-            density="compact"
-            color="mattBlue"
-          >
-            <template v-slot:label>
-              <div>
-                ต้องการรับรางวัล ตาม
-                <router-link to="/reward-law" target="_blank">
-                  กฎหมายการรับสินน้ำใจ
-                </router-link>
-              </div>
-            </template>
-          </v-checkbox></v-card-text
-        >
-
-        <v-card-actions class="mt-5">
-          <v-row>
-            <v-col>
-              <v-btn
-                class="bg-mattBlue"
-                rounded="pill"
-                block
-                @click="confirmSendItem()"
-              >
-                ยืนยัน
-              </v-btn>
-            </v-col>
-            <v-col>
-              <v-btn
-                variant="outlined"
-                rounded="pill"
-                block
-                @click="confirmDialog = false"
-              >
-                ยกเลิก
-              </v-btn>
-            </v-col>
-          </v-row>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-  </v-btn>
-  <v-btn
-    v-if="isReceiveNotifyNotice && !notice.status"
-    block
-    rounded="0"
-    class="bg-mattBlue text-center h4-th"
-  >
-    ส่งการยืนยันรับของ
-    <v-dialog
-      v-model="confirmDialog"
-      persistent
-      activator="parent"
-      class="h4-th"
-      width="auto"
-    >
-      <v-card class="h4-th pa-5">
-        <v-row no-gutters="true">
-          <v-col cols="12">
-            <v-btn
-              icon="mdi-close"
-              class="float-end d-inline"
-              flat
-              @click="confirmDialog = false"
-            ></v-btn>
-          </v-col>
-        </v-row>
-        <v-card-title class="text-center"> ยืนยันการรับของ </v-card-title>
-        <v-card-text>คุณต้องการยืนยันการรับของหรือไม่</v-card-text>
-
-        <v-card-actions class="mt-5">
-          <v-row>
-            <v-col>
-              <v-btn
-                class="bg-mattBlue"
-                rounded="pill"
-                block
-                @click="confirmReceiveItem()"
-              >
-                ยืนยัน
-              </v-btn>
-            </v-col>
-            <v-col>
-              <v-btn
-                variant="outlined"
-                rounded="pill"
-                block
-                @click="confirmDialog = false"
-              >
-                ยกเลิก
-              </v-btn>
-            </v-col>
-          </v-row>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-  </v-btn>
 
   <CustomDialog
     :value="dialog.value"
@@ -249,7 +374,7 @@ import {
 import {
   createNotificationFirebase,
   isExistNotificationFirebase,
-  isMatchNotificationFirebase,
+  getMatchNotificationFirebase,
   updateNotificationFirebase,
 } from "../services/firebases/notifications";
 
@@ -280,8 +405,8 @@ export default {
     return {
       messages: [],
       confirmDialog: false,
-      isSendNotifyNotice: false,
-      isReceiveNotifyNotice: false,
+      isSendNotifyNotice: true,
+      receiveNotifyNotice: null,
       isLoading: false,
       text: "",
       dialog: {
@@ -290,6 +415,10 @@ export default {
         content: "",
       },
       isReward: false,
+      moreMenu: false,
+      issue: "",
+      reportDialog: false,
+      isReport: false,
     };
   },
   methods: {
@@ -306,11 +435,11 @@ export default {
 
         //create or update message notification
         await this.sendNotificationMessage(
-          "ข้อความ",
           this.chatId,
           this.notice.userId === this.getUserId
             ? this.visitorId
-            : this.notice.userId
+            : this.notice.userId,
+          this.text
         );
 
         //get all message by chat id
@@ -350,104 +479,151 @@ export default {
     },
     async confirmSendItem() {
       await this.sendNotification(
-        this.isReward
-          ? "รอการยืนยันการรับส่งของและให้รางวัล"
-          : "รอการยืนยันการรับส่งของ",
+        "wait confirm receipt",
         this.chatId,
         this.notice.userId === this.getUserId
           ? this.visitorId
-          : this.notice.userId
+          : this.notice.userId,
+        this.isReward
+          ? "รอการยืนยันการรับส่งของและให้ค่าตอบแทน"
+          : "รอการยืนยันการรับส่งของ"
       );
       this.confirmDialog = false;
+      this.isReward = false;
       this.dialog = {
         value: true,
         type: "success",
         content: "ยืนยันการคืนของสำเร็จ",
       };
-      // alert("ยืนยันการคืนของสำเร็จ");
-      // this.isSendNotifyNotice = true;
     },
     async confirmReceiveItem() {
+      const text =
+        this.receiveNotifyNotice.text ===
+        "รอการยืนยันการรับส่งของและให้ค่าตอบแทน"
+          ? "ยืนยันการรับส่งของสำเร็จและให้ค่าตอบแทน"
+          : "ยืนยันการรับส่งของสำเร็จ";
+
       await this.sendNotification(
-        "ยืนยันการรับส่งของสำเร็จ",
+        "confirm receipt",
         this.chatId,
         this.notice.userId === this.getUserId
           ? this.visitorId
-          : this.notice.userId
+          : this.notice.userId,
+        text
       );
 
       await updateNoticeFirebase(this.notice.noticeId, { status: true });
 
       this.confirmDialog = false;
+
       this.dialog = {
         value: true,
         type: "success",
-        content: "ยืนยันการรับของสำเร็จ",
+        content: text,
       };
-      // alert("ยืนยันการรับของสำเร็จ");
-      // this.$emit("updateStatus", true);
     },
-
-    async sendNotificationMessage(type, itemId, userId) {
-      // check is exist notification type message
-      const notificationId = await isMatchNotificationFirebase(
-        type,
-        itemId,
-        userId
-      );
-
-      if (notificationId !== null) {
-        // yes , update time notification
-        const notification = {
-          dateTime: new Date(),
+    async confirmReportUser() {
+      const { valid } = await this.$refs.form.validate();
+      if (valid) {
+        await this.sendNotification(
+          "report user",
+          this.chatId,
+          this.notice.userId === this.getUserId
+            ? this.visitorId
+            : this.notice.userId,
+          this.issue
+        );
+        this.issue = "";
+        this.reportDialog = false;
+        this.moreMenu = false;
+        this.isReport = true;
+        this.dialog = {
+          value: true,
+          type: "success",
+          content: "รายงานบัญชีสำเร็จ",
         };
-        await updateNotificationFirebase(notificationId, notification);
-      } else {
-        //no , create notification
-        await this.sendNotification(type, itemId, userId);
       }
     },
 
-    async sendNotification(type, itemId, userId) {
-      //ยืนยันการรับส่งของ ข้อความ ใบประกาศหมดอายุ
+    async sendNotificationMessage(chatId, receiver, text) {
+      // check is exist notification type message
+      const notification = await getMatchNotificationFirebase(
+        "message",
+        chatId,
+        receiver
+      );
+
+      if (notification !== null) {
+        // yes , update time notification
+        const updateNotification = {
+          dateTime: new Date(),
+          text: text,
+        };
+        await updateNotificationFirebase(
+          notification.notificationId,
+          updateNotification
+        );
+      } else {
+        //no , create notification
+        await this.sendNotification("message", chatId, receiver, text);
+      }
+    },
+
+    async sendNotification(type, itemId, receiver, text) {
       const notification = {
-        userId: userId,
+        sender: this.getUserId,
+        receiver: receiver,
         itemId: itemId,
         type: type,
+        text: text,
         dateTime: new Date(),
       };
       await createNotificationFirebase(notification);
     },
 
     async getIsSendNotifyNotice() {
-      this.isLoading = true;
       const isSend = await isExistNotificationFirebase(
-        "รอการยืนยันการรับส่งของ",
+        "wait confirm receipt",
         this.chatId
       );
       this.isSendNotifyNotice = isSend;
-      this.isLoading = false;
     },
     async getIsReceiveNotifyNotice() {
-      this.isLoading = true;
-      const isReceive = await isMatchNotificationFirebase(
-        "รอการยืนยันการรับส่งของ",
+      const receiveNotification = await getMatchNotificationFirebase(
+        "wait confirm receipt",
         this.chatId,
         this.getUserId
       );
 
-      this.isReceiveNotifyNotice = isReceive !== null;
-      this.isLoading = false;
+      this.receiveNotifyNotice = receiveNotification;
+    },
+    async getIsReport() {
+      const isReport = await isExistNotificationFirebase(
+        "report user",
+        this.chatId
+      );
+      this.isReport = isReport;
     },
     setShowDialog(isShow) {
       this.dialog.value = isShow;
       if (!isShow) {
         if (this.dialog.content === "ยืนยันการคืนของสำเร็จ") {
           this.isSendNotifyNotice = true;
-        } else if (this.dialog.content === "ยืนยันการรับของสำเร็จ") {
+        } else if (
+          this.dialog.content === "ยืนยันการรับของสำเร็จ" ||
+          this.dialog.content === "ยืนยันการรับส่งของสำเร็จและให้ค่าตอบแทน"
+        ) {
           this.$emit("updateStatus", true);
         }
       }
+    },
+    async initChat() {
+      this.isLoading = true;
+      await this.getIsReport();
+      await this.getMessages();
+      await this.getIsSendNotifyNotice();
+      await this.getIsReceiveNotifyNotice();
+      this.isLoading = false;
     },
   },
   computed: {
@@ -471,18 +647,15 @@ export default {
       deep: true,
     },
     chatId: function () {
-      this.getMessages();
-      this.getIsSendNotifyNotice();
-      this.getIsReceiveNotifyNotice();
+      this.isSendNotifyNotice = true;
+      this.receiveNotifyNotice = null;
+      this.isReport = false;
+      this.initChat();
     },
   },
 
   created() {
-    this.isLoading = true;
-    this.getMessages();
-    this.isLoading = false;
-    this.getIsSendNotifyNotice();
-    this.getIsReceiveNotifyNotice();
+    this.initChat();
   },
 };
 </script>

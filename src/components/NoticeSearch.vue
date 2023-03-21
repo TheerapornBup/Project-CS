@@ -207,14 +207,16 @@ export default {
         } else if (remainingDays <= 10) {
           // closed expire notice -> send notification
           const isSend = await isExistNotificationFirebase(
-            "ใบประกาศใกล้หมดอายุ",
+            "expire soon",
             notice.noticeId
           );
           if (!isSend) {
             const notification = {
-              userId: notice.userId,
+              sender: notice.userId,
+              receiver: notice.userId,
               itemId: notice.noticeId,
-              type: "ใบประกาศใกล้หมดอายุ",
+              type: "expire soon",
+              text: "ใบประกาศใกล้หมดอายุ",
               dateTime: new Date(),
             };
             await createNotificationFirebase(notification);
