@@ -31,7 +31,7 @@
         </div>
         <div class="log-in-field">
           <v-btn
-            class="bg-lightGreen text-black btn h4-th"
+            class="bg-lightGreen text-black btn-login h4-th"
             rounded
             block
             @click.prevent="validateForm"
@@ -42,7 +42,7 @@
         <div class="log-in-field">
           <v-btn
             to="/create-account"
-            class="bg-blueGreen text-whiteCream btn h4-th"
+            class="bg-blueGreen text-whiteCream btn-login h4-th"
             rounded
             block
           >
@@ -143,7 +143,21 @@ export default {
 };
 </script>
 
-<style scopes>
+<style>
+.dp__input {
+  border-radius: 40px !important;
+  height: 45px !important;
+}
+
+.dp__input_icon {
+  left: 180px;
+  top: 52%;
+}
+
+.dp__clear_icon {
+  top: 52%;
+  right: 60px;
+}
 .v-field {
   border-radius: 40px;
 }
@@ -153,8 +167,8 @@ export default {
 .v-messages {
   font-family: "Noto Serif Thai";
   font-style: normal;
-  font-weight: 400;
-  font-size: 10px;
+  font-weight: 600;
+  font-size: 13px;
 }
 .v-input {
   font-family: "Noto Serif Thai";
@@ -182,7 +196,7 @@ export default {
   margin-bottom: 10px;
 }
 
-.btn {
+.btn-login {
   height: 45px;
   margin-top: 20px;
 }

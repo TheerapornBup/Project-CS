@@ -57,8 +57,9 @@
             </div>
           </div>
 
-          <v-form ref="form">
-            <v-container>
+          <!--cardbox---->
+          <v-form ref="form" class="pt-5">
+            <v-container class="add-notice-box">
               <v-row>
                 <v-col cols="1"></v-col>
                 <v-col cols="6">
@@ -158,28 +159,29 @@
                     variant="solo"
                     :max-date="new Date()"
                     :clearable="false"
+                    style="width: 230px;"
                   ></VueDatePicker>
                   <v-col cols="1"></v-col>
                 </v-col>
               </v-row>
 
+            </v-container>
               <v-row>
                 <v-col cols="4"></v-col>
                 <v-col cols="2">
-                  <v-btn class="save-btn mt-2 h4-th" @click.prevent="addNotice"
+                  <v-btn class="save-btn mt-4 h4-th" @click.prevent="addNotice"
                     >ลงประกาศ</v-btn
                   >
                 </v-col>
                 <v-col cols="2">
                   <v-btn
-                    class="discard-btn mt-2 h4-th text-whiteCream"
+                    class="discard-btn mt-4 h4-th text-whiteCream"
                     @click="cancelButton()"
                     >ยกเลิก</v-btn
                   >
                 </v-col>
                 <v-col cols="4"></v-col>
-              </v-row>
-            </v-container>
+              </v-row>            
           </v-form>
         </v-card-text>
       </div>
@@ -450,15 +452,21 @@ export default {
 </script>
 
 <style>
-.v-messages {
+/*.v-messages {
   font-family: "Noto Serif Thai";
   font-weight: 700;
   font-size: 16px;
   font-style: bold;
-}
+}*/
 
-.v-field {
+/*.v-field {
   border-radius: 40px;
+}*/
+.add-notice-box{
+  background: #EAE7E6;
+  border-radius: 100px;
+  width: 850px;
+  height: 400px;
 }
 
 .add-notice-card {
@@ -475,7 +483,7 @@ export default {
   font-weight: 400;
   font-size: 16px;
   line-height: 26px;
-  color: #eae7e6;
+  color: #000000;
 }
 
 .save-btn {
@@ -497,12 +505,12 @@ export default {
 }
 
 .dp__input {
-  border-radius: 40px;
-  height: 60px;
+  border-radius: 40px !important;
+  height: 45px !important;
 }
 
 .dp__input_icon {
-  left: 220px;
+  left: 180px;
   top: 52%;
 }
 
