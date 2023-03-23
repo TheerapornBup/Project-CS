@@ -44,7 +44,6 @@
                 append-inner-icon="mdi-map-marker-radius"
                 @click:append-inner="locationHandle()"
                 variant="solo"
-               
                 v-model="selectedLocation"
               ></v-text-field>
 
@@ -89,10 +88,11 @@
             <!-- search button -->
             <v-col cols="2">
               <v-btn class="bg-blueGreen mb-5 h5-th" @click="search()"
-                >ค้นหา</v-btn>
+                >ค้นหา</v-btn
+              >
             </v-col>
-            </v-row>
-            </v-card>
+          </v-row>
+        </v-card>
       </v-col>
 
       <!-- notice card -->
@@ -118,22 +118,16 @@
 
 <script>
 import NoticeCard from "./NoticeCard.vue";
-import {
-  deleteNoticeFirebase,
-  getNoticesFirebase,
-} from "../services/firebases/notices";
+import { getNoticesFirebase } from "../services/firebases/notices";
 import { getNameByIdFirebase } from "../services/firebases/users";
 import { diffDate, diffMilliseconds } from "@/services/DateTime";
 import {
   createNotificationFirebase,
   isExistNotificationFirebase,
 } from "@/services/firebases/notifications";
-import {
-  deleteChatByNoticeIdFirebase,
-  getChatByNoticeIdFirebase,
-} from "@/services/firebases/chats";
-import { deleteMessageByChatIdFirebase } from "@/services/firebases/messages";
+
 import axios from "axios";
+import { deleteNoticeById } from "@/services/deleteItem";
 export default {
   name: "NoticeSearch",
   components: {
@@ -197,12 +191,7 @@ export default {
 
         if (remainingDays <= 0) {
           // expire notice -> delete notice chat message
-          let chatsList = await getChatByNoticeIdFirebase(this.notice.noticeId);
-          for (let index in chatsList) {
-            await deleteMessageByChatIdFirebase(chatsList[index].chatId);
-          }
-          await deleteChatByNoticeIdFirebase(this.notice.noticeId);
-          await deleteNoticeFirebase(this.notice.noticeId);
+          await deleteNoticeById(this.notice.noticeId);
         } else if (remainingDays <= 10) {
           // closed expire notice -> send notification
           const isSend = await isExistNotificationFirebase(

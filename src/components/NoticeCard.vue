@@ -239,12 +239,7 @@ import {
 import NoticeChat from "./NoticeChat.vue";
 import NoticeDetails from "./NoticeDetails.vue";
 import CustomDialog from "./CustomDialog.vue";
-import { deleteNoticeFirebase } from "../services/firebases/notices";
-import {
-  getChatByNoticeIdFirebase,
-  deleteChatByNoticeIdFirebase,
-} from "@/services/firebases/chats";
-import { deleteMessageByChatIdFirebase } from "../services/firebases/messages";
+import { deleteNoticeById } from "@/services/deleteItem";
 export default {
   name: "NoticeCard",
   data() {
@@ -290,17 +285,11 @@ export default {
       return remainingDays;
     },
     async confirmDeleteNotice() {
-      let chatsList = await getChatByNoticeIdFirebase(this.notice.noticeId);
-      for (let index in chatsList) {
-        await deleteMessageByChatIdFirebase(chatsList[index].chatId);
-      }
-      await deleteChatByNoticeIdFirebase(this.notice.noticeId);
-      await deleteNoticeFirebase(this.notice.noticeId);
-
+      await deleteNoticeById(this.notice.noticeId);
       this.deleteDialog = false;
       this.dialog = {
         value: true,
-        type: "warning",
+        type: "success",
         content: "ลบใบประกาศสำเร็จ",
       };
       //this.$emit("updateNotice");

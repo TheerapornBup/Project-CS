@@ -219,22 +219,11 @@ import CardContent from "./CardContent.vue";
 import CustomDialog from "./CustomDialog.vue";
 import { encryptData } from "../services/encrypt";
 import {
-  // deleteUserFirebase,
   getUserByIdFirebase,
   updateUserFirebase,
 } from "../services/firebases/users";
+import { deleteUserAccount } from "@/services/deleteItem";
 
-// import {
-//   getNoticeByUserIdFirebase,
-//   deleteNoticeByUserIdFirebase,
-// } from "../services/firebases/notices";
-// import {
-//   getChatByNoticeIdFirebase,
-//   deleteChatByNoticeIdFirebase,
-//   getChatByVisitorIdFirebase,
-//   deleteChatByVisitorIdFirebase,
-// } from "../services/firebases/chats";
-// import { deleteMessageByChatIdFirebase } from "../services/firebases/messages";
 export default {
   name: "EditAccount",
   components: {
@@ -374,28 +363,7 @@ export default {
     },
 
     async confirmDeleteAccount() {
-      // //delete all owner notice, chat, message
-      // let noticesList = await getNoticeByUserIdFirebase(this.getUserId);
-      // for (let i in noticesList) {
-      //   let chatsList = await getChatByNoticeIdFirebase(
-      //     noticesList[i].noticeId
-      //   );
-      //   for (let j in chatsList) {
-      //     await deleteMessageByChatIdFirebase(chatsList[j].chatId);
-      //   }
-      //   await deleteChatByNoticeIdFirebase(noticesList[i].noticeId);
-      // }
-      // await deleteNoticeByUserIdFirebase(this.getUserId);
-
-      // //delete all visitor chat, message
-      // let chatsList = await getChatByVisitorIdFirebase(this.getUserId);
-      // for (let i in chatsList) {
-      //   await deleteMessageByChatIdFirebase(chatsList[i].chatId);
-      // }
-      // await deleteChatByVisitorIdFirebase(this.getUserId);
-
-      // //delete account
-      // await deleteUserFirebase(this.getUserId);
+      await deleteUserAccount(this.getUserId);
       this.deleteDialog = false;
       this.dialog = {
         value: true,
