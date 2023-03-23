@@ -9,6 +9,14 @@
       color="primary"
     ></v-progress-circular>
 
+    <!-- show no notices -->
+    <ShowNoData
+      v-else-if="notices.length === 0"
+      icon="mdi-file-search-outline"
+      text="ไม่มีใบประกาศ"
+    />
+
+    <!-- show notices -->
     <v-row v-else>
       <!-- search -->
       <v-col cols="12" class="overlap">
@@ -59,7 +67,7 @@
                 "
               >
                 <!-- google map -->
-                <GMapMap
+                <!-- <GMapMap
                   :center="{
                     lat: locationLat,
                     lng: locationLong,
@@ -74,7 +82,7 @@
                       lng: locationLong,
                     }"
                   />
-                </GMapMap>
+                </GMapMap> -->
               </v-card>
             </v-col>
 
@@ -118,6 +126,7 @@
 
 <script>
 import NoticeCard from "./NoticeCard.vue";
+import ShowNoData from "./ShowNoData.vue";
 import { getNoticesFirebase } from "../services/firebases/notices";
 import { getNameByIdFirebase } from "../services/firebases/users";
 import { diffDate, diffMilliseconds } from "@/services/DateTime";
@@ -132,6 +141,7 @@ export default {
   name: "NoticeSearch",
   components: {
     NoticeCard,
+    ShowNoData,
   },
   data() {
     return {
@@ -285,7 +295,7 @@ export default {
     locationHandle() {
       this.mapCard = !this.mapCard;
       if (this.mapCard && this.selectedLocation === null) {
-        this.getCurrentLocation();
+        //this.getCurrentLocation();
       }
     },
     setLocationPosition(lat, lng) {
