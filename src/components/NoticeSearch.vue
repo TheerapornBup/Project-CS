@@ -67,7 +67,7 @@
                 "
               >
                 <!-- google map -->
-                <!-- <GMapMap
+                <GMapMap
                   :center="{
                     lat: locationLat,
                     lng: locationLong,
@@ -82,7 +82,7 @@
                       lng: locationLong,
                     }"
                   />
-                </GMapMap> -->
+                </GMapMap>
               </v-card>
             </v-col>
 
@@ -295,7 +295,7 @@ export default {
     locationHandle() {
       this.mapCard = !this.mapCard;
       if (this.mapCard && this.selectedLocation === null) {
-        //this.getCurrentLocation();
+        this.getCurrentLocation();
       }
     },
     setLocationPosition(lat, lng) {
