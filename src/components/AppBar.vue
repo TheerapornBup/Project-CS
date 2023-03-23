@@ -24,8 +24,14 @@
         </v-btn>
       </template>
 
-      <v-card min-width="300" max-height="200" class="h4-th overflow-y-auto">
-        <v-list>
+      <v-card
+        max-width="400"
+        min-width="300"
+        max-height="300"
+        class="h4-th overflow-y-auto"
+      >
+        <!--show notification list -->
+        <v-list v-if="notifications.length > 0">
           <!-- profile information -->
           <v-list-item
             v-for="(notification, index) in notifications"
@@ -61,6 +67,9 @@
             </template>
           </v-list-item>
         </v-list>
+
+        <!-- show no notification -->
+        <ShowNoData v-else icon="mdi-bell" text="ยังไม่มีการแจ้งเตือน" />
       </v-card>
     </v-menu>
 
@@ -174,6 +183,7 @@
 </template>
 
 <script>
+import ShowNoData from "./ShowNoData.vue";
 import {
   getUserByIdFirebase,
   getNameByIdFirebase,
@@ -188,7 +198,9 @@ import {
 } from "@/services/DateTime";
 export default {
   name: "AppBar",
-
+  components: {
+    ShowNoData,
+  },
   data() {
     return {
       user: {

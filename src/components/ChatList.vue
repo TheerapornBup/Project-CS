@@ -15,6 +15,13 @@
           color="primary"
         ></v-progress-circular>
 
+        <!-- show no chats -->
+        <ShowNoData
+          v-else-if="allChats.length === 0"
+          icon="mdi-forum-outline"
+          text="ไม่มีประวัติแชท"
+        />
+
         <v-row v-else>
           <!-- chat list -->
           <v-col cols="3">
@@ -86,7 +93,15 @@
           </v-col>
           <!-- notice card -->
           <v-col cols="3">
-            <v-card class="noticeCard" ref="noticeCard">
+            <v-card
+              class="noticeCard"
+              ref="noticeCard"
+              :class="
+                allChats[selectedChat].notice.type === 'ประกาศพบเจอของหาย'
+                  ? 'bg-blueGreen'
+                  : 'bg-lightBrown'
+              "
+            >
               <NoticeDetails
                 v-if="allChats.length > 0"
                 :notice="allChats[selectedChat].notice"
@@ -100,6 +115,7 @@
 
 <script>
 import NoticeDetails from "./NoticeDetails.vue";
+import ShowNoData from "./ShowNoData.vue";
 import {
   getNoticesByUserIdFirebase,
   getNoticeByIdFirebase,
@@ -123,6 +139,7 @@ export default {
     NoticeDetails,
     TabBar,
     ChatMessage,
+    ShowNoData,
   },
   data() {
     return {

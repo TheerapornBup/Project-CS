@@ -11,6 +11,14 @@
           color="primary"
         ></v-progress-circular>
 
+        <!-- show no history -->
+        <ShowNoData
+          v-else-if="notices.length === 0"
+          icon="mdi-history"
+          text="ไม่มีประวัติใบประกาศ "
+        />
+
+        <!-- show history -->
         <v-row v-else>
           <!-- select status -->
           <v-col cols="12">
@@ -31,7 +39,7 @@
             md="4"
             sm="6"
           >
-            <NoticeCard :notice="notice" />
+            <NoticeCard :notice="notice" @updateNotice="updateNotice" />
           </v-col>
         </v-row>
       </v-container>
@@ -41,6 +49,7 @@
 
 <script>
 import NoticeCard from "./NoticeCard.vue";
+import ShowNoData from "./ShowNoData.vue";
 import TabBar from "./TabBar.vue";
 import { getNoticesByUserIdFirebase } from "../services/firebases/notices";
 import { getNameByIdFirebase } from "../services/firebases/users";
@@ -49,6 +58,7 @@ export default {
   components: {
     NoticeCard,
     TabBar,
+    ShowNoData,
   },
   data() {
     return {
@@ -102,6 +112,10 @@ export default {
       this.allNotices = noticesList;
       this.notices = this.allNotices;
       this.isLoading = false;
+    },
+    async updateNotice() {
+      await this.getNotices();
+      this.filterNoticeTypeAndStatus();
     },
   },
   computed: {
