@@ -50,7 +50,7 @@
       </v-col>
 
       <v-col cols="4" v-for="(itemType, index) in itemTypesList" :key="index">
-        <div class="mx-3 my-10">
+        <div class="mx-3 my-10 pb-10">
           <v-avatar
             size="120"
             style="
@@ -108,8 +108,18 @@
   </v-container>
 
   <!-- footer -->
-  <v-footer class="bg-mattBlue mt-10" style="height: 100px">
-    <p>about us</p>
+  <v-footer class="bg-bluee mt-10">
+    <v-row>   
+      <v-col cols="12">
+        <div class="mt-8" style="text-align:center;">
+          <h3>" หวังว่าทุกท่านจะได้รับประสบการณ์การใช้งานที่ดี "</h3> 
+          <p class="mt-5 mb-2">ติดต่อเรา</p>
+          <pe>E-mail : kanrawee.pe@ku.th</pe><br/>
+          <pe class="mt-3 mb-5">E-mail : theeraporn.b@ku.th</pe>
+          <div class="mb-8"></div>
+        </div>  
+      </v-col>        
+    </v-row>
   </v-footer>
 </template>
 
@@ -233,6 +243,10 @@ export default {
 </script>
 
 <style scoped>
+.bg-bluee{
+  background-color: #4B7085;
+  color: white;
+}
 h1 {
   font-family: "Playfair Display";
   font-style: normal;
@@ -242,6 +256,13 @@ h1 {
 }
 p {
   font-family: "Noto Serif Thai";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 26px;
+}
+pe {
+  font-family: "Playfair Display";
   font-style: normal;
   font-weight: 400;
   font-size: 16px;
