@@ -18,10 +18,11 @@ export default {
 };
 </script>
 
-<style scopes>
+<style>
 .card {
   width: 75%;
-  height: 640px;
+  /*height: 610px;*/
+  height: auto;
   margin: auto;
   box-shadow: 0px 8px 16px 8px rgba(0, 0, 0, 0.25);
   border-radius: 20px;

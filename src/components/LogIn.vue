@@ -1,4 +1,5 @@
 <template>
+
   <CardContent>
     <template v-slot:content-right
       ><label class="title">LOG IN</label>
@@ -29,7 +30,7 @@
             :rules="passwordRules"
           />
         </div>
-        <div class="log-in-field">
+        <div class="log-in-field pt-10">
           <v-btn
             class="bg-lightGreen text-black btn-login h4-th"
             rounded
@@ -39,7 +40,7 @@
             เข้าสู่ระบบ
           </v-btn>
         </div>
-        <div class="log-in-field">
+        <div class="log-in-field pb-10">
           <v-btn
             to="/create-account"
             class="bg-blueGreen text-whiteCream btn-login h4-th"
@@ -49,9 +50,11 @@
             สร้างบัญชี
           </v-btn>
         </div>
-      </v-form></template
-    > </CardContent
-  ><CustomDialog
+      </v-form>
+    </template> 
+  </CardContent>
+
+<CustomDialog
     :value="dialog.value"
     :type="dialog.type"
     :content="dialog.content"
@@ -188,6 +191,7 @@ export default {
 }
 
 .log-in-form {
+  padding-top: 70px;
   width: 70%;
   margin: auto;
 }

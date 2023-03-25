@@ -71,6 +71,7 @@
                     class="mt-3"
                     style="width: auto"
                     variant="solo"
+                    density="compact"
                     required
                     v-model="itemType"
                     :rules="itemTypeRules"
@@ -106,6 +107,7 @@
                     append-inner-icon="mdi-map-marker-radius"
                     @click:append-inner="mapCard = !mapCard"
                     variant="solo"
+                    density="compact"
                     v-model="locationAddress"
                     :rules="locationRules"
                   ></v-text-field
@@ -147,6 +149,7 @@
                   <v-textarea
                     class="mt-3"
                     variant="solo"
+                    density="compact"
                     v-model="detail"
                   ></v-textarea>
                 </v-col>
