@@ -303,14 +303,11 @@ export default {
         type: "success",
         content: "แก้ไขข้อมูลส่วนตัวสำเร็จ",
       };
-      // alert("แก้ไขข้อมูลส่วนตัวสำเร็จ");
-      // this.$router.back();
-      // this.resetForm();
     },
 
     async updatePassword() {
       const encryptPassword = encryptData(this.newPassword);
-      console.log("encrypt");
+
       const newData = {
         password: encryptPassword,
       };
@@ -320,9 +317,6 @@ export default {
         type: "success",
         content: "เปลี่ยนรหัสผ่านใหม่สำเร็จ",
       };
-      // alert("เปลี่ยนรหัสผ่านใหม่สำเร็จ");
-      // this.$router.back();
-      // this.resetForm();
     },
 
     async validateForm() {
@@ -331,23 +325,20 @@ export default {
         if (this.selectedMenu === "editAccount") {
           this.updateAccount();
         } else {
-          if (this.currentPassword !== this.user.password) {
+          const encryptCurrentPassword = encryptData(this.currentPassword);
+          const encryptNewPassword = encryptData(this.newPassword);
+          if (encryptCurrentPassword !== this.user.password) {
             this.dialog = {
               value: true,
               type: "warning",
               content: "รหัสผ่านเดิมไม่ถูกต้อง",
             };
-            // alert("รหัสผ่านเดิมไม่ถูกต้อง");
-            // this.currentPassword = "";
-          } else if (this.newPassword === this.user.password) {
+          } else if (encryptNewPassword === this.user.password) {
             this.dialog = {
               value: true,
               type: "warning",
               content: "กรุณากรอกรหัสผ่านใหม่",
             };
-            // alert("กรุณากรอกรหัสผ่านใหม่");
-            // this.newPassword = "";
-            // this.confirmNewPassword = "";
           } else {
             this.updatePassword();
           }
@@ -370,11 +361,6 @@ export default {
         type: "success",
         content: "ลบบัญชีสำเร็จ",
       };
-
-      // alert("ลบบัญชีสำเร็จ");
-
-      // this.$router.push("/");
-      // this.$store.dispatch("userId/logOut");
     },
     setShowDialog(isShow) {
       this.dialog.value = isShow;

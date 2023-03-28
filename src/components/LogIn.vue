@@ -111,8 +111,6 @@ export default {
           type: "warning",
           content: "ชื่อผู้ใช้/อีเมล หรือรหัสผ่าน ไม่ถูกต้อง",
         };
-        //alert("ชื่อผู้ใช้/อีเมล หรือรหัสผ่าน ไม่ถูกต้อง");
-        //this.password = "";
       }
     },
     resetForm() {
@@ -122,12 +120,6 @@ export default {
 
     toggleShowPassword() {
       this.showPassword = !this.showPassword;
-      // const encryptPassword1 = encryptData("tom1234");
-      // const encryptPassword2 = encryptData("tom1234");
-      // const encryptPassword3 = encryptData("tom1234");
-      // console.log("encryptPassword1: ", encryptPassword1);
-      // console.log("encryptPassword2: ", encryptPassword2);
-      // console.log("encryptPassword3: ", encryptPassword3);
     },
     setShowDialog(isShow) {
       this.dialog.value = isShow;

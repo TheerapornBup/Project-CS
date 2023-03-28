@@ -238,9 +238,6 @@ export default {
         type: "success",
         content: "สร้างบัญชีสำเร็จ",
       };
-      // alert("สร้างบัญชีสำเร็จ");
-      // this.resetForm();
-      // this.$router.push("/");
     },
 
     async validateForm() {
@@ -255,16 +252,12 @@ export default {
           type: "warning",
           content: "ชื่อผู้ใช้นี้มีผู้ใช้งานแล้ว กรุณากรอกชื่อผู้ใช้ใหม่",
         };
-        // alert("ชื่อผู้ใช้นี้มีผู้ใช้งานแล้ว กรุณากรอกชื่อผู้ใช้ใหม่");
-        // this.username = "";
       } else if (isExistEmail) {
         this.dialog = {
           value: true,
           type: "warning",
           content: "อีเมลนี้มีผู้ใช้งานแล้ว กรุณากรอกอีเมลใหม่",
         };
-        // alert("อีเมลนี้มีผู้ใช้งานแล้ว กรุณากรอกอีเมลใหม่");
-        // this.email = "";
       } else if (valid) {
         await this.addUser();
       }
