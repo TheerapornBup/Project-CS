@@ -136,7 +136,7 @@
           <!-- edit notice button -->
           <v-col cols=" 12">
             <v-row>
-              <v-col cols="6" v-if="notice.userId === getUserId">
+              <v-col cols="6" style="padding:3px;" v-if="notice.userId === getUserId">
                 <v-btn
                   prepend-icon="mdi-file-edit-outline "
                   variant="text"

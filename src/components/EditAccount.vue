@@ -90,7 +90,7 @@
           </div>
 
           <!-- confirm password text field -->
-          <div class="log-in-field">
+          <div class="log-in-field pb-8">
             <label class="h4-th">ยืนยันรหัสผ่านใหม่</label>
             <v-text-field
               :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
@@ -98,6 +98,7 @@
               bg-color="lightWhite"
               density="compact"
               variant="solo"
+              class="pb-15"
               v-model="confirmNewPassword"
               :rules="confirmPasswordRules"
               @click:append-inner="toggleShowPassword"
@@ -106,7 +107,7 @@
         </div>
 
         <!-- save button -->
-        <v-row class="log-in-field">
+        <v-row class="log-in-field pt-10">
           <v-col
             ><v-btn
               class="bg-lightGreen text-black btn h4-th"

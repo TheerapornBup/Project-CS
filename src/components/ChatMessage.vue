@@ -262,6 +262,8 @@
     </v-menu>
   </v-sheet>
 
+  <div class="hh-scroll">
+
   <!-- show messages list-->
   <div
     class="scroll bg-blueGreen pa-2 h4-th"
@@ -329,8 +331,11 @@
       </div>
     </div>
   </div>
+
+  </div>
+
   <!-- input message -->
-  <v-sheet class="h-20 d-flex bg-lightBrown align-center">
+  <v-sheet class="d-flex bg-lightBrown align-center" style="padding:2px;">
     <!-- text field message -->
     <v-text-field
       class="flex-grow-1 px-2 h4-th"
@@ -660,10 +665,19 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 .scroll {
-  height: 90vh;
+  height: 68vh;
   margin: 0;
   overflow-y: auto;
+}
+.hh-scroll{
+  height:490px;
+}
+
+.card-col {
+  display: flex;
+  flex-direction: column;
+  height: auto;
 }
 </style>

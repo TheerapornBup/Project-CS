@@ -25,7 +25,7 @@
         <v-row v-else>
           <!-- chat list -->
           <v-col cols="3">
-            <v-card class="bg-whiteCream">
+            <v-card class="bg-whiteCream" style="height:610px;">
               <v-list class="h4-th">
                 <v-list-item
                   active-class="bg-lightBrown"
@@ -322,4 +322,6 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style>
+
+</style>
