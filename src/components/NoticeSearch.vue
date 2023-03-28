@@ -91,6 +91,7 @@
               <VueDatePicker
                 v-model="selectedDateTime"
                 :max-date="new Date()"
+                :clearable="false"
               ></VueDatePicker>
             </v-col>
             <!-- search button -->
