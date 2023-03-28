@@ -25,13 +25,14 @@
         <v-row v-else>
           <!-- chat list -->
           <v-col cols="3">
-            <v-card class="bg-whiteCream" style="height:610px;">
-              <v-list class="h4-th">
+            <v-card class="bg-whiteCream overflow-y-auto" style="height: 85vh">
+              <v-list class="h4-th bg-whiteCream">
                 <v-list-item
                   active-class="bg-lightBrown"
                   :class="
                     selectedChat === index ? 'bg-lightBrown' : 'bg-whiteCream'
                   "
+                  class="overflow-y-auto"
                   v-for="(chat, index) in allChats"
                   :key="index"
                   :value="index"
@@ -322,6 +323,4 @@ export default {
 };
 </script>
 
-<style>
-
-</style>
+<style></style>

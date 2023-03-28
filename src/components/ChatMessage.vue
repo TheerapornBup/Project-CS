@@ -263,79 +263,77 @@
   </v-sheet>
 
   <div class="hh-scroll">
-
-  <!-- show messages list-->
-  <div
-    class="scroll bg-blueGreen pa-2 h4-th"
-    :class="isLoading === true ? 'd-flex' : ''"
-  >
-    <!-- loading -->
-    <v-progress-circular
-      v-if="isLoading"
-      class="ma-auto"
-      size="50"
-      indeterminate
-      color="whieCream"
-    ></v-progress-circular>
-    <div v-else>
-      <div
-        class="ma-0 w-100 d-flex flex-column"
-        v-for="(message, index) in messages"
-        :key="index"
-      >
-        <!-- show message date -->
+    <!-- show messages list-->
+    <div
+      class="scroll bg-blueGreen pa-2 h4-th"
+      :class="isLoading === true ? 'd-flex' : ''"
+    >
+      <!-- loading -->
+      <v-progress-circular
+        v-if="isLoading"
+        class="ma-auto"
+        size="50"
+        indeterminate
+        color="whieCream"
+      ></v-progress-circular>
+      <div v-else>
         <div
-          class="text-center mb-2 mt-1"
-          v-if="
-            index === 0 ||
-            getDate(message.dateTime.seconds) !==
-              getDate(messages[index - 1].dateTime.seconds)
-          "
+          class="ma-0 w-100 d-flex flex-column"
+          v-for="(message, index) in messages"
+          :key="index"
         >
-          <v-card class="d-inline pa-1 rounded-pill">{{
-            getDateCard(message.dateTime.seconds)
-          }}</v-card>
-        </div>
-
-        <div
-          class="d-flex mb-2"
-          :class="
-            message.sender === !(getUserId === notice.userId)
-              ? 'flex-row-reverse'
-              : 'flex-row'
-          "
-        >
-          <!-- show avatar  -->
-          <v-avatar
-            v-if="message.sender === (getUserId === notice.userId)"
-            class="bg-whiteCream mr-1 h5-th"
-            size="30"
-            >{{ name.charAt(0).toUpperCase() }}</v-avatar
+          <!-- show message date -->
+          <div
+            class="text-center mb-2 mt-1"
+            v-if="
+              index === 0 ||
+              getDate(message.dateTime.seconds) !==
+                getDate(messages[index - 1].dateTime.seconds)
+            "
           >
-          <!-- show message text -->
-          <v-card
-            class="pa-2 mt-1 rounded-xl"
+            <v-card class="d-inline pa-1 rounded-pill">{{
+              getDateCard(message.dateTime.seconds)
+            }}</v-card>
+          </div>
+
+          <div
+            class="d-flex mb-2"
             :class="
               message.sender === !(getUserId === notice.userId)
-                ? 'rounded-te-0 bg-lightGreen'
-                : 'rounded-ts-0 bg-whiteCream'
+                ? 'flex-row-reverse'
+                : 'flex-row'
             "
-            max-width="50%"
-            >{{ message.text }}
-          </v-card>
-          <!-- show message time -->
-          <p class="align-self-end mx-1 h5-th">
-            {{ getTime(message.dateTime) }}
-          </p>
+          >
+            <!-- show avatar  -->
+            <v-avatar
+              v-if="message.sender === (getUserId === notice.userId)"
+              class="bg-whiteCream mr-1 h5-th"
+              size="30"
+              >{{ name.charAt(0).toUpperCase() }}</v-avatar
+            >
+            <!-- show message text -->
+            <v-card
+              class="pa-2 mt-1 rounded-xl"
+              :class="
+                message.sender === !(getUserId === notice.userId)
+                  ? 'rounded-te-0 bg-lightGreen'
+                  : 'rounded-ts-0 bg-whiteCream'
+              "
+              max-width="50%"
+              >{{ message.text }}
+            </v-card>
+            <!-- show message time -->
+            <p class="align-self-end mx-1 h5-th">
+              {{ getTime(message.dateTime) }}
+            </p>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
-  </div>
-
   <!-- input message -->
-  <v-sheet class="d-flex bg-lightBrown align-center" style="padding:2px;">
+  <v-sheet class="d-flex bg-lightBrown align-center" style="padding: 2px">
     <!-- text field message -->
     <v-text-field
       class="flex-grow-1 px-2 h4-th"
@@ -671,8 +669,8 @@ export default {
   margin: 0;
   overflow-y: auto;
 }
-.hh-scroll{
-  height:490px;
+.hh-scroll {
+  height: 68vh;
 }
 
 .card-col {
