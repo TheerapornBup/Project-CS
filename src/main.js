@@ -7,6 +7,7 @@ import store from "./store";
 import VueGoogleMaps from "@fawmi/vue-google-maps";
 import VueDatePicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
+import VueClientRecaptcha from "vue-client-recaptcha";
 loadFonts();
 
 createApp(App)
@@ -19,4 +20,5 @@ createApp(App)
     },
   })
   .component("VueDatePicker", VueDatePicker)
+  .component("VueClientRecaptcha", VueClientRecaptcha)
   .mount("#app");

@@ -10,7 +10,7 @@
               <v-col cols="4"></v-col>
               <v-col cols="4" style="text-align: center">
                 <!-- register title -->
-                <label class="title-regist add-on-title">REGISTER</label>
+                <label class="title-regist add-on-title">ลงทะเบียน</label>
               </v-col>
               <v-col cols="4"></v-col>
             </v-row>
@@ -116,14 +116,36 @@
                 >
                   <template v-slot:label>
                     <div>
-                      ฉันได้อ่าน และ อนุมัติ
+                      ฉันได้อ่าน และ ยอมรับ
                       <router-link to="/policy-terms">
-                        ข้อกำหนดในการให้บริการและนโยบายความเป็นส่วนตัวแล้ว
+                        ข้อกำหนดในการให้บริการและนโยบายความเป็นส่วนตัว
                       </router-link>
                     </div>
                   </template>
                 </v-checkbox>
               </v-col>
+            </v-row>
+
+            <!-- captcha text field -->
+            <v-row>
+              <v-col cols="1"></v-col>
+              <v-col cols="5">
+                <VueClientRecaptcha
+                  :value="inputCaptcha"
+                  @isValid="checkValidCaptcha"
+                  style="display: flex"
+                />
+              </v-col>
+              <v-col cols="5"
+                ><label class="h4-th">กรุณาป้อนตัวอักษรที่เห็นในภาพ</label
+                ><v-text-field
+                  v-model="inputCaptcha"
+                  bg-color="lightWhite"
+                  density="compact"
+                  variant="solo"
+                  :rules="captchaRules"
+              /></v-col>
+              <v-col cols="1"></v-col>
             </v-row>
 
             <v-row>
@@ -169,6 +191,7 @@ export default {
   components: {
     CustomDialog,
   },
+
   data() {
     return {
       firstName: "",
@@ -179,7 +202,8 @@ export default {
       confirmPassword: "",
       isAgree: false,
       showPassword: false,
-
+      inputCaptcha: null,
+      isValidCaptcha: false,
       nameRules: [(v) => !!v || "กรุณากรอกชื่อ"],
       lastNameRules: [(v) => !!v || "กรุณากรอกนามสกุล"],
       emailRules: [
@@ -208,6 +232,7 @@ export default {
           !!v ||
           "คุณต้องอนุมัติข้อกำหนดในการให้บริการและนโยบายความเป็นส่วนตัวแล้ว",
       ],
+      captchaRules: [(v) => !!v || "กรุณาป้อนตัวอักษร"],
 
       dialog: {
         value: false,
@@ -240,37 +265,51 @@ export default {
       };
     },
 
+    checkValidCaptcha(value) {
+      this.isValidCaptcha = value;
+    },
+
     async validateForm() {
       const { valid } = await this.$refs.form.validate();
 
       const isExistUsername = await isExistUsernameFirebase(this.username);
       const isExistEmail = await isExistEmailFirebase(this.email);
 
-      if (isExistUsername) {
-        this.dialog = {
-          value: true,
-          type: "warning",
-          content: "ชื่อผู้ใช้นี้มีผู้ใช้งานแล้ว กรุณากรอกชื่อผู้ใช้ใหม่",
-        };
-      } else if (isExistEmail) {
-        this.dialog = {
-          value: true,
-          type: "warning",
-          content: "อีเมลนี้มีผู้ใช้งานแล้ว กรุณากรอกอีเมลใหม่",
-        };
-      } else if (valid) {
-        await this.addUser();
+      if (valid) {
+        if (isExistUsername) {
+          this.dialog = {
+            value: true,
+            type: "warning",
+            content: "ชื่อผู้ใช้นี้มีผู้ใช้งานแล้ว กรุณากรอกชื่อผู้ใช้ใหม่",
+          };
+        } else if (isExistEmail) {
+          this.dialog = {
+            value: true,
+            type: "warning",
+            content: "อีเมลนี้มีผู้ใช้งานแล้ว กรุณากรอกอีเมลใหม่",
+          };
+        } else if (!this.isValidCaptcha) {
+          this.dialog = {
+            value: true,
+            type: "warning",
+            content: "captcha ไม่ถูกต้อง กรุณากรอกตัวอักษรที่เห็นในภาพใหม่",
+          };
+        } else {
+          await this.addUser();
+        }
       }
     },
     resetForm() {
       this.$refs.form.reset();
+      this.isValidCaptcha = false;
+      this.inputCaptcha = null;
     },
     setShowDialog(isShow) {
       this.dialog.value = isShow;
       if (!isShow) {
         if (this.dialog.content === "สร้างบัญชีสำเร็จ") {
           this.resetForm();
-          this.$router.push("/");
+          this.$router.push("/log-in");
         } else if (
           this.dialog.content ===
           "ชื่อผู้ใช้นี้มีผู้ใช้งานแล้ว กรุณากรอกชื่อผู้ใช้ใหม่"
@@ -280,6 +319,11 @@ export default {
           this.dialog.content === "อีเมลนี้มีผู้ใช้งานแล้ว กรุณากรอกอีเมลใหม่"
         ) {
           this.email = "";
+        } else if (
+          this.dialog.content ===
+          "captcha ไม่ถูกต้อง กรุณากรอกตัวอักษรที่เห็นในภาพใหม่"
+        ) {
+          this.inputCaptcha = null;
         }
       }
     },
@@ -293,12 +337,12 @@ export default {
 }
 
 .title-regist {
-  font-family: "Playfair Display";
+  font-family: "Noto Serif Thai";
   font-style: normal;
   font-weight: 400;
   font-size: 40px;
   line-height: 53px;
-  padding-top: 5px;
+  padding-top: 100px;
   text-align: center;
 }
 
