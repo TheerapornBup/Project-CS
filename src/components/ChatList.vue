@@ -145,7 +145,7 @@ export default {
   data() {
     return {
       selectedChat: 0,
-      tabs: ["ทั้งหมด", "ยืนยันสถานะแล้ว", "ยังไม่ยืนยันสถานะ"],
+      tabs: ["ทั้งหมด", "ปิดเคสแล้ว", "ยังไม่ปิดเคส"],
       allNotices: [],
       allChats: [],
       isVistor: true,
@@ -162,7 +162,7 @@ export default {
 
       if (tab !== "ทั้งหมด") {
         this.allChats = this.allChats.filter((chat) => {
-          if (tab === "ยืนยันสถานะแล้ว") {
+          if (tab === "ปิดเคสแล้ว") {
             return chat.notice.status === true;
           } else {
             return chat.notice.status === false;

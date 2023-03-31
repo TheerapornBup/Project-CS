@@ -136,7 +136,11 @@
           <!-- edit notice button -->
           <v-col cols=" 12">
             <v-row>
-              <v-col cols="6" style="padding:3px;" v-if="notice.userId === getUserId">
+              <v-col
+                cols="6"
+                style="padding: 3px"
+                v-if="notice.userId === getUserId"
+              >
                 <v-btn
                   prepend-icon="mdi-file-edit-outline "
                   variant="text"
@@ -210,7 +214,7 @@
                 <v-card
                   class="text-center rounded-pill pa-1 float-end d-inline h5-th"
                   :class="notice.status ? 'bg-success' : 'bg-warning'"
-                  >{{ notice.status ? "เสร็จสิ้นแล้ว" : "ยังไม่ดำเนินการ" }}
+                  >{{ notice.status ? "ปิดเคสแล้ว" : "ยังไม่ปิดเคส" }}
                 </v-card>
               </v-col>
             </v-row>
@@ -292,9 +296,6 @@ export default {
         type: "success",
         content: "ลบใบประกาศสำเร็จ",
       };
-      //this.$emit("updateNotice");
-      // alert("ลบใบประกาศสำเร็จ");
-      // this.noticeDialog = false;
     },
     setShowDialog(isShow) {
       this.dialog.value = isShow;
