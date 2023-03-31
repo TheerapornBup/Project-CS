@@ -165,32 +165,30 @@
                     variant="solo"
                     :max-date="new Date()"
                     :clearable="false"
-                    style="width: 230px;"
+                    style="width: 230px"
                   ></VueDatePicker>
                   <v-col cols="1"></v-col>
                 </v-col>
               </v-row>
-
-
             </v-container>
-              <v-row>
-                <v-col cols="4"></v-col>
-                <v-col cols="2">
-                  <v-btn
-                    class="save-btn mt-4 h4-th"
-                    @click.prevent="updateNotice()"
-                    >บันทึก</v-btn
-                  >
-                </v-col>
-                <v-col cols="2">
-                  <v-btn
-                    class="discard-btn mt-4 h4-th text-whiteCream"
-                    @click="cancelButton()"
-                    >ยกเลิก</v-btn
-                  >
-                </v-col>
-                <v-col cols="4"></v-col>
-              </v-row>            
+            <v-row>
+              <v-col cols="4"></v-col>
+              <v-col cols="2">
+                <v-btn
+                  class="save-btn mt-4 h4-th"
+                  @click.prevent="updateNotice()"
+                  >บันทึก</v-btn
+                >
+              </v-col>
+              <v-col cols="2">
+                <v-btn
+                  class="discard-btn mt-4 h4-th text-whiteCream"
+                  @click="cancelButton()"
+                  >ยกเลิก</v-btn
+                >
+              </v-col>
+              <v-col cols="4"></v-col>
+            </v-row>
           </v-form>
         </v-card-text>
       </div>
@@ -240,6 +238,25 @@ export default {
       itemType: "",
       pic: null,
       noticeId: "",
+
+      defautPic: {
+        บัตรสำคัญประจำตัว: "credit-card-dafault.jpg",
+        เงิน: "money-dafault.jpg",
+        กระเป๋า: "bag-default.jpg",
+        อุปกรณ์อิเล็กทรอนิกส์: "electronic-dafault.jpg",
+        เครื่องประดับ: "accessories-dafault.jpg",
+        เครื่องสำอาง: "cosmetics-dafault.jpg",
+        เอกสาร: "document-dafault.jpg",
+        เสื้อผ้า: "clothes-dafault.jpg",
+        แว่นตา: "glasses-dafault.jpg",
+        กุญแจ: "keys-dafault.jpg",
+        อุปกรณ์กีฬา: "sports-dafault.jpg",
+        อุปกรณ์ถ่ายภาพ: "camera-dafault.jpg",
+        เครื่องเขียน: "stationeries-dafault.jpg",
+        หนังสือ: "book-dafault.jpg",
+        อุปกรณ์ทางการแพทย์: "medical-default.jpg",
+        รองเท้า: "shoes-dafault.jpg",
+      },
 
       dialog: {
         value: false,
@@ -329,11 +346,16 @@ export default {
 
       if (valid) {
         let picture = this.pic;
-        if (this.image !== null) {
+
+        if (this.image == null && this.pic.includes("-dafault.jpg")) {
+          this.pathpic = this.defautPic[this.itemType];
+          picture = await this.downloadPic();
+        } else if (this.image !== null) {
           this.pathpic = this.noticeId + ".jpg";
           await this.uploadPic();
           picture = await this.downloadPic();
         }
+
         const notice = {
           type: this.type,
           detail: this.detail,
@@ -440,109 +462,4 @@ export default {
 };
 </script>
 
-<style>
-/*.v-field {
-  border-radius: 40px;
-}*/
-
-/*.add-notice-card {
-  width: 912px;
-  height: auto;
-  background: #358787;
-  margin: auto;
-  box-shadow: 0px 8px 16px 8px rgba(0, 0, 0, 0.25);
-}
-
-.topic {
-  font-family: "Noto Serif Thai";
-  font-style: normal;
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 26px;
-  color: #eae7e6;
-}
-
-.save-btn {
-  width: 210px;
-  height: 40px;
-  background: #a6d2cd;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  border-radius: 40px;
-}
-
-.discard-btn {
-  width: 210px;
-  height: 40px;
-  box-sizing: border-box;
-  border: 2px solid #292929;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  border-radius: 40px;
-  background-color: #358787;
-}
-
-.dp__input {
-  border-radius: 40px;
-  height: 60px;
-}
-
-.dp__input_icon {
-  left: 220px;
-  top: 52%;
-}
-
-.dp__clear_icon {
-  top: 52%;
-  right: 60px;
-}
-
-.mx-icon-calendar,
-.mx-icon-clear {
-  font-size: 20px;
-  margin: 1px -51px;
-}
-
-.mx-input {
-  border-radius: 40px;
-  box-shadow: inset 0 1px 1px rgb(0 0 0 / 8%);
-  height: 55px;
-  width: 270px;
-  padding-top: 16px;
-  padding-left: 16px;
-  padding-right: 40px;
-  padding-bottom: 16px;
-}
-
-.mx-datepicker-popup {
-  position: absolute;
-  left: 850.263px;
-  top: 300px;
-}
-
-.card-map {
-  margin-top: 40px !important;
-  height: 220px;
-  width: 25% !important;
-}
-input[type="file"] {
-  width: 30%;
-  max-width: 30%;
-  color: #444;
-  background: #f1f1f1;
-  border-radius: 8px;
-}
-input[type="file"]::file-selector-button {
-  margin-right: 20px;
-  border: none;
-  background: #a6d2cd;
-  padding: 5px 10px;
-  border-top-left-radius: 8px;
-  border-bottom-left-radius: 8px;
-  color: black;
-  cursor: pointer;
-  transition: background 0.2s ease-in-out;
-}
-
-input[type="file"]::file-selector-button:hover {
-  background: #95c3bd;
-}*/
-</style>
+<style></style>
