@@ -82,7 +82,7 @@
       <v-card
         class="text-center rounded-pill pa-1 float-end d-inline h5-th"
         :class="notice.status ? 'bg-success' : 'bg-warning'"
-        >{{ notice.status ? "เสร็จสิ้นแล้ว" : "ยังไม่ดำเนินการ" }}
+        >{{ notice.status ? "ปิดเคสแล้ว" : "ยังไม่ปิดเคส" }}
       </v-card>
     </v-col>
   </v-row>

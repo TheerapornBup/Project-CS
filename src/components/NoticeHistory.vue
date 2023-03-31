@@ -11,36 +11,37 @@
           color="primary"
         ></v-progress-circular>
 
-        <!-- show no history -->
-        <ShowNoData
-          v-else-if="notices.length === 0"
-          icon="mdi-history"
-          text="ไม่มีประวัติใบประกาศ "
-        />
-
-        <!-- show history -->
         <v-row v-else>
           <!-- select status -->
           <v-col cols="12">
             <v-select
               class="d-inline-flex float-end"
               v-model="selectedStatus"
-              :items="['ทั้งหมด', 'ยังไม่ดำเนินการ', 'เสร็จสิ้นแล้ว']"
+              :items="['ทั้งหมด', 'ยังไม่ปิดเคส', 'ปิดเคสแล้ว']"
               variant="solo"
               density="compact"
             ></v-select>
           </v-col>
-          <!-- notice card -->
-          <v-col
-            v-for="(notice, index) in notices"
-            :key="index"
-            cols="12"
-            lg="3"
-            md="4"
-            sm="6"
-          >
-            <NoticeCard :notice="notice" @updateNotice="updateNotice" />
+
+          <!-- show no history -->
+          <v-col cols="12" v-if="notices.length === 0">
+            <ShowNoData icon="mdi-history" text="ไม่มีประวัติใบประกาศ " />
           </v-col>
+
+          <!-- show history -->
+          <v-row v-else>
+            <!-- notice card -->
+            <v-col
+              v-for="(notice, index) in notices"
+              :key="index"
+              cols="12"
+              lg="3"
+              md="4"
+              sm="6"
+            >
+              <NoticeCard :notice="notice" @updateNotice="updateNotice" />
+            </v-col>
+          </v-row>
         </v-row>
       </v-container>
     </template>
@@ -82,7 +83,7 @@ export default {
       ) {
         this.notices = this.allNotices;
       } else {
-        const status = this.selectedStatus === "เสร็จสิ้นแล้ว";
+        const status = this.selectedStatus === "ปิดเคสแล้ว";
 
         const notices = this.allNotices.filter((notice) => {
           if (this.selectedType === "ทั้งหมด") {
