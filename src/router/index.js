@@ -54,12 +54,6 @@ const routes = [
     component: () => import("../components/NoticeSearch.vue"),
   },
   {
-    path: "/location",
-    name: "location",
-
-    component: () => import("../components/LocationField.vue"),
-  },
-  {
     path: "/reward-law",
     name: "rewardLaw",
 
