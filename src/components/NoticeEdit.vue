@@ -34,12 +34,31 @@
                   <div
                     class="form-group d-flex flex-column justify-center align-center"
                   >
-                    <template v-if="pic !== null || preview !== null">
+                    <template
+                      v-if="
+                        type === 'ประกาศพบเจอของหาย' ||
+                        (type === 'ประกาศตามหาของหาย' &&
+                          isDefaultPic &&
+                          preview === null)
+                      "
+                    >
+                      <img
+                        :src="require(`../assets/${defaultImage}`)"
+                        style="height: 200px"
+                      />
+                    </template>
+                    <template
+                      v-else-if="
+                        type === 'ประกาศตามหาของหาย' &&
+                        (pic !== null || preview !== null)
+                      "
+                    >
                       <img
                         :src="preview !== null ? preview : pic"
                         style="height: 200px"
                       />
                     </template>
+
                     <div
                       v-else
                       class="border"
@@ -51,6 +70,9 @@
                       @change="previewImage"
                       class="form-control-file h4-th mt-2"
                       id="my-file"
+                      :style="
+                        type === 'ประกาศพบเจอของหาย' ? 'display: none' : ''
+                      "
                     />
                   </div>
                 </form>
@@ -238,24 +260,24 @@ export default {
       itemType: "",
       pic: null,
       noticeId: "",
-
+      defaultImage: null,
       defautPic: {
-        บัตรสำคัญประจำตัว: "credit-card-dafault.jpg",
-        เงิน: "money-dafault.jpg",
+        บัตรสำคัญประจำตัว: "credit-card-default.jpg",
+        เงิน: "money-default.jpg",
         กระเป๋า: "bag-default.jpg",
-        อุปกรณ์อิเล็กทรอนิกส์: "electronic-dafault.jpg",
-        เครื่องประดับ: "accessories-dafault.jpg",
-        เครื่องสำอาง: "cosmetics-dafault.jpg",
-        เอกสาร: "document-dafault.jpg",
-        เสื้อผ้า: "clothes-dafault.jpg",
-        แว่นตา: "glasses-dafault.jpg",
-        กุญแจ: "keys-dafault.jpg",
-        อุปกรณ์กีฬา: "sports-dafault.jpg",
-        อุปกรณ์ถ่ายภาพ: "camera-dafault.jpg",
-        เครื่องเขียน: "stationeries-dafault.jpg",
-        หนังสือ: "book-dafault.jpg",
+        อุปกรณ์อิเล็กทรอนิกส์: "electronic-default.jpg",
+        เครื่องประดับ: "accessories-default.jpg",
+        เครื่องสำอาง: "cosmetics-default.jpg",
+        เอกสาร: "document-default.jpg",
+        เสื้อผ้า: "clothes-default.jpg",
+        แว่นตา: "glasses-default.jpg",
+        กุญแจ: "keys-default.jpg",
+        อุปกรณ์กีฬา: "sports-default.jpg",
+        อุปกรณ์ถ่ายภาพ: "camera-default.jpg",
+        เครื่องเขียน: "stationeries-default.jpg",
+        หนังสือ: "book-default.jpg",
         อุปกรณ์ทางการแพทย์: "medical-default.jpg",
-        รองเท้า: "shoes-dafault.jpg",
+        รองเท้า: "shoes-default.jpg",
       },
 
       dialog: {
@@ -281,10 +303,21 @@ export default {
       this.noticeId = this.$route.params.id;
       this.getNotice();
     },
+
+    itemType() {
+      if (this.itemType !== null) {
+        this.defaultImage = this.defautPic[this.itemType];
+      } else {
+        this.defaultImage = null;
+      }
+    },
   },
   computed: {
     getUserId() {
       return this.$store.getters["userId/getUserId"];
+    },
+    isDefaultPic() {
+      return this.pic !== null ? this.pic.includes("-default.jpg") : false;
     },
   },
   methods: {
@@ -347,10 +380,15 @@ export default {
       if (valid) {
         let picture = this.pic;
 
-        if (this.image == null && this.pic.includes("-dafault.jpg")) {
-          this.pathpic = this.defautPic[this.itemType];
+        if (
+          this.type === "ประกาศพบเจอของหาย" ||
+          (this.type === "ประกาศตามหาของหาย" &&
+            this.isDefaultPic &&
+            this.image === null)
+        ) {
+          this.pathpic = this.defaultImage;
           picture = await this.downloadPic();
-        } else if (this.image !== null) {
+        } else if (this.image !== null && this.type === "ประกาศตามหาของหาย") {
           this.pathpic = this.noticeId + ".jpg";
           await this.uploadPic();
           picture = await this.downloadPic();
@@ -457,6 +495,7 @@ export default {
       this.itemType = "";
       this.detail = "";
       this.pic = null;
+      this.defaultImage = null;
     },
   },
 };

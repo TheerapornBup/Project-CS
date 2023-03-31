@@ -34,7 +34,17 @@
                   <div
                     class="form-group d-flex flex-column justify-center align-center"
                   >
-                    <template v-if="preview">
+                    <template
+                      v-if="type === 'ประกาศพบเจอของหาย' && defaultImage"
+                    >
+                      <img
+                        :src="require(`../assets/${defaultImage}`)"
+                        style="height: 200px"
+                      />
+                    </template>
+                    <template
+                      v-else-if="type === 'ประกาศตามหาของหาย' && preview"
+                    >
                       <img :src="preview" style="height: 200px" />
                     </template>
                     <div
@@ -43,6 +53,7 @@
                       style="width: 30%; height: 200px"
                     ></div>
                     <input
+                      v-if="type === 'ประกาศตามหาของหาย'"
                       type="file"
                       accept="image/*"
                       @change="previewImage"
@@ -148,6 +159,7 @@
                     variant="solo"
                     density="compact"
                     v-model="detail"
+                    :rules="detailRules"
                   ></v-textarea>
                 </v-col>
                 <v-col cols="4">
@@ -163,29 +175,28 @@
                     density="compact"
                     :max-date="new Date()"
                     :clearable="false"
-                    style="width: 230px;"
+                    style="width: 230px"
                   ></VueDatePicker>
                   <v-col cols="1"></v-col>
                 </v-col>
               </v-row>
-
             </v-container>
-              <v-row>
-                <v-col cols="4"></v-col>
-                <v-col cols="2">
-                  <v-btn class="save-btn mt-4 h4-th" @click.prevent="addNotice"
-                    >ลงประกาศ</v-btn
-                  >
-                </v-col>
-                <v-col cols="2">
-                  <v-btn
-                    class="discard-btn mt-4 h4-th text-whiteCream"
-                    @click="cancelButton()"
-                    >ยกเลิก</v-btn
-                  >
-                </v-col>
-                <v-col cols="4"></v-col>
-              </v-row>            
+            <v-row>
+              <v-col cols="4"></v-col>
+              <v-col cols="2">
+                <v-btn class="save-btn mt-4 h4-th" @click.prevent="addNotice"
+                  >ลงประกาศ</v-btn
+                >
+              </v-col>
+              <v-col cols="2">
+                <v-btn
+                  class="discard-btn mt-4 h4-th text-whiteCream"
+                  @click="cancelButton()"
+                  >ยกเลิก</v-btn
+                >
+              </v-col>
+              <v-col cols="4"></v-col>
+            </v-row>
           </v-form>
         </v-card-text>
       </div>
@@ -233,24 +244,25 @@ export default {
       detail: "",
       itemType: "",
       pathpic: "",
+      defaultImage: null,
 
       defautPic: {
-        บัตรสำคัญประจำตัว: "credit-card-dafault.jpg",
-        เงิน: "money-dafault.jpg",
+        บัตรสำคัญประจำตัว: "credit-card-default.jpg",
+        เงิน: "money-default.jpg",
         กระเป๋า: "bag-default.jpg",
-        อุปกรณ์อิเล็กทรอนิกส์: "electronic-dafault.jpg",
-        เครื่องประดับ: "accessories-dafault.jpg",
-        เครื่องสำอาง: "cosmetics-dafault.jpg",
-        เอกสาร: "document-dafault.jpg",
-        เสื้อผ้า: "clothes-dafault.jpg",
-        แว่นตา: "glasses-dafault.jpg",
-        กุญแจ: "keys-dafault.jpg",
-        อุปกรณ์กีฬา: "sports-dafault.jpg",
-        อุปกรณ์ถ่ายภาพ: "camera-dafault.jpg",
-        เครื่องเขียน: "stationeries-dafault.jpg",
-        หนังสือ: "book-dafault.jpg",
+        อุปกรณ์อิเล็กทรอนิกส์: "electronic-default.jpg",
+        เครื่องประดับ: "accessories-default.jpg",
+        เครื่องสำอาง: "cosmetics-default.jpg",
+        เอกสาร: "document-default.jpg",
+        เสื้อผ้า: "clothes-default.jpg",
+        แว่นตา: "glasses-default.jpg",
+        กุญแจ: "keys-default.jpg",
+        อุปกรณ์กีฬา: "sports-default.jpg",
+        อุปกรณ์ถ่ายภาพ: "camera-default.jpg",
+        เครื่องเขียน: "stationeries-default.jpg",
+        หนังสือ: "book-default.jpg",
         อุปกรณ์ทางการแพทย์: "medical-default.jpg",
-        รองเท้า: "shoes-dafault.jpg",
+        รองเท้า: "shoes-default.jpg",
       },
 
       dialog: {
@@ -265,7 +277,17 @@ export default {
           (!!v && this.locationLat !== 0 && this.locationLong !== 0) ||
           "กรุณาเลือกสถานที่",
       ],
+      detailRules: [(v) => !!v || "กรุณากรอกรายละเอียด"],
     };
+  },
+  watch: {
+    itemType() {
+      if (this.itemType !== null) {
+        this.defaultImage = this.defautPic[this.itemType];
+      } else {
+        this.defaultImage = null;
+      }
+    },
   },
   created() {
     this.getCurrentLocation();
@@ -329,13 +351,13 @@ export default {
           lat: this.locationLat,
           long: this.locationLong,
         };
-        console.log(notice);
+
         const noticeId = await createNoticeFirebase(notice);
-        if (this.image == null) {
-          this.pathpic = this.defautPic[this.itemType];
-        } else {
+        if (this.image !== null && this.type === "ประกาศตามหาของหาย") {
           this.pathpic = noticeId + ".jpg";
           await this.uploadPic();
+        } else {
+          this.pathpic = this.defaultImage;
         }
 
         const picture = await this.downloadPic();
@@ -450,11 +472,10 @@ export default {
       this.dateTime = new Date();
       this.itemType = "";
       this.detail = "";
+      this.defaultImage = null;
     },
   },
 };
 </script>
 
-<style>
-
-</style>
+<style></style>
