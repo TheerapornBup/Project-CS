@@ -48,6 +48,7 @@
             <!-- select location -->
             <v-col cols="3">
               <v-text-field
+                placeholder="ระบุสถานที่ใกล้เคียง"
                 density="compact"
                 append-inner-icon="mdi-map-marker-radius"
                 @click:append-inner="locationHandle()"
@@ -89,6 +90,7 @@
             <!-- select date time -->
             <v-col cols="2" class="py-0 date-input">
               <VueDatePicker
+              placeholder="ระบุวันเวลาที่ใกล้เคียง"
                 v-model="selectedDateTime"
                 :max-date="new Date()"
                 :clearable="false"
@@ -378,6 +380,10 @@ export default {
   position: relative;
   top: -10px;
   border-radius: 40px;
+}
+
+.dp__input_icon_pad {
+  padding-left: 16px;
 }
 /*.dp__input_icon {
   left: 172px;

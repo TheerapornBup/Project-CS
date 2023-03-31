@@ -30,7 +30,7 @@
           rounded="pill "
           @click="show = false"
         >
-          Ok
+          ตกลง
         </v-btn>
       </v-card-actions></v-card
     >

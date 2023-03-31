@@ -2,7 +2,7 @@
 
   <CardContent>
     <template v-slot:content-right
-      ><label class="title">LOG IN</label>
+      ><label class="title-login">ลงบันทึกเข้าใช้</label>
       <v-form class="log-in-form" ref="form">
         <div class="log-in-field">
           <label class="h4-th">ชื่อผู้ใช้/อีเมล</label>
@@ -181,7 +181,15 @@ export default {
   padding-top: 100px;
   text-align: center;
 }
-
+.title-login{
+  font-family: "Noto Serif Thai";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 40px;
+  line-height: 53px;
+  padding-top: 100px;
+  text-align: center;  
+}
 .log-in-form {
   padding-top: 70px;
   width: 70%;
