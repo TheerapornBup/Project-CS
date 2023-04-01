@@ -177,6 +177,7 @@
                         density="compact"
                         :max-date="new Date()"
                         :clearable="false"
+                        :format="'dd/MM/yyyy'"
                         style="width: 230px"
                       ></VueDatePicker>
                     </v-col>
