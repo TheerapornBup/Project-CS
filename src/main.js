@@ -16,7 +16,7 @@ createApp(App)
   .use(store)
   .use(VueGoogleMaps, {
     load: {
-      key: "AIzaSyDEJiW679Uw3p7X5xgQEamRU3agd2zWUAM",
+      key: process.env.VUE_APP_MAP_KEY,
     },
   })
   .component("VueDatePicker", VueDatePicker)

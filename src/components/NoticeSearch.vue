@@ -341,7 +341,7 @@ export default {
             lat +
             ", " +
             long +
-            "&key=AIzaSyDEJiW679Uw3p7X5xgQEamRU3agd2zWUAM"
+            `&key=${process.env.VUE_APP_MAP_KEY}`
         )
         .then((response) => {
           if (response.data.error_message) {
