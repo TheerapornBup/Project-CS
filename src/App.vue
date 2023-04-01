@@ -109,6 +109,7 @@ export default {
 .dp__input {
   border-radius: 40px !important;
   height: 45px !important;
+  font-family: 'Noto Serif Thai' !important;
 }
 
 .dp__input_icon {

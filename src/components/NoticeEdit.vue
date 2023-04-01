@@ -188,6 +188,7 @@
                         v-model="dateTime"
                         class="mt-3"
                         variant="solo"
+                        :format="'dd/MM/yyyy'"
                         :max-date="new Date()"
                         :clearable="false"
                         style="width: 230px"
