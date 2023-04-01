@@ -72,6 +72,14 @@
     <v-col cols="12">
       <ShowLocation :locationLat="notice.lat" :locationLong="notice.long" />
     </v-col>
+    <!-- reward notice -->
+    <v-col cols="12">
+      <div class="h5-th">
+        {{ notice.reward ? "" : "ไม่" }}ต้องการ{{
+          notice.type === "ประกาศตามหาของหาย" ? "ให้" : "รับ"
+        }}ค่าตอบแทน
+      </div>
+    </v-col>
 
     <v-col v-if="showStatus" cols="12" class="d-flex align-center">
       <!-- remaining day notice -->

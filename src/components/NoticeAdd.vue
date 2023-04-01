@@ -163,20 +163,46 @@
                   ></v-textarea>
                 </v-col>
                 <v-col cols="4">
-                  <v-text class="topic">{{
-                    type === "ประกาศตามหาของหาย"
-                      ? "วันเวลาที่คาดว่าของหาย"
-                      : "วันเวลาที่พบของหาย"
-                  }}</v-text>
-                  <VueDatePicker
-                    v-model="dateTime"
-                    class="mt-3"
-                    variant="solo"
-                    density="compact"
-                    :max-date="new Date()"
-                    :clearable="false"
-                    style="width: 230px"
-                  ></VueDatePicker>
+                  <v-row>
+                    <v-col cols="12">
+                      <v-text class="topic">{{
+                        type === "ประกาศตามหาของหาย"
+                          ? "วันเวลาที่คาดว่าของหาย"
+                          : "วันเวลาที่พบของหาย"
+                      }}</v-text>
+                      <VueDatePicker
+                        v-model="dateTime"
+                        class="mt-3"
+                        variant="solo"
+                        density="compact"
+                        :max-date="new Date()"
+                        :clearable="false"
+                        style="width: 230px"
+                      ></VueDatePicker>
+                    </v-col>
+                    <v-col cols="12">
+                      <v-checkbox
+                        class="mt-3 ml-2"
+                        v-model="reward"
+                        density="compact"
+                        color="mattBlue"
+                      >
+                        <template v-slot:label>
+                          <div class="pl-2">
+                            <p>
+                              ต้องการ{{
+                                type === "ประกาศตามหาของหาย" ? "ให้" : "รับ"
+                              }}ค่าตอบแทนตาม
+                            </p>
+                            <router-link to="/reward-law" target="_blank">
+                              กฎหมายการรับสินน้ำใจ
+                            </router-link>
+                          </div>
+                        </template>
+                      </v-checkbox>
+                    </v-col>
+                  </v-row>
+
                   <v-col cols="1"></v-col>
                 </v-col>
               </v-row>
@@ -243,6 +269,7 @@ export default {
       dateTime: new Date(),
       detail: "",
       itemType: "",
+      reward: false,
       pathpic: "",
       defaultImage: null,
 
@@ -350,6 +377,7 @@ export default {
           userId: this.getUserId,
           lat: this.locationLat,
           long: this.locationLong,
+          reward: this.reward,
         };
 
         const noticeId = await createNoticeFirebase(notice);
@@ -473,6 +501,7 @@ export default {
       this.itemType = "";
       this.detail = "";
       this.defaultImage = null;
+      this.reward = false;
     },
   },
 };

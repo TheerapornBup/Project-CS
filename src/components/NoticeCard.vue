@@ -133,6 +133,14 @@
               </v-row>
             </v-col>
           </v-row>
+          <!-- reward notice -->
+          <v-col cols="12" offset="6">
+            <div class="h5-th">
+              {{ notice.reward ? "" : "ไม่" }}ต้องการ{{
+                notice.type === "ประกาศตามหาของหาย" ? "ให้" : "รับ"
+              }}ค่าตอบแทน
+            </div>
+          </v-col>
           <!-- edit notice button -->
           <v-col cols=" 12">
             <v-row>

@@ -173,22 +173,49 @@
                     variant="solo"
                     density="compact"
                     v-model="detail"
+                    :rules="detailRules"
                   ></v-textarea>
                 </v-col>
                 <v-col cols="4">
-                  <v-text class="topic">{{
-                    type === "ประกาศตามหาของหาย"
-                      ? "วันเวลาที่คาดว่าของหาย"
-                      : "วันเวลาที่พบของหาย"
-                  }}</v-text>
-                  <VueDatePicker
-                    v-model="dateTime"
-                    class="mt-3"
-                    variant="solo"
-                    :max-date="new Date()"
-                    :clearable="false"
-                    style="width: 230px"
-                  ></VueDatePicker>
+                  <v-row>
+                    <v-col cols="12">
+                      <v-text class="topic">{{
+                        type === "ประกาศตามหาของหาย"
+                          ? "วันเวลาที่คาดว่าของหาย"
+                          : "วันเวลาที่พบของหาย"
+                      }}</v-text>
+                      <VueDatePicker
+                        v-model="dateTime"
+                        class="mt-3"
+                        variant="solo"
+                        :max-date="new Date()"
+                        :clearable="false"
+                        style="width: 230px"
+                      ></VueDatePicker>
+                    </v-col>
+                    <v-col cols="12">
+                      <v-checkbox
+                        class="mt-3 ml-2"
+                        v-model="reward"
+                        density="compact"
+                        color="mattBlue"
+                      >
+                        <template v-slot:label>
+                          <div class="pl-2">
+                            <p>
+                              ต้องการ{{
+                                type === "ประกาศตามหาของหาย" ? "ให้" : "รับ"
+                              }}ค่าตอบแทนตาม
+                            </p>
+                            <router-link to="/reward-law" target="_blank">
+                              กฎหมายการรับสินน้ำใจ
+                            </router-link>
+                          </div>
+                        </template>
+                      </v-checkbox>
+                    </v-col>
+                  </v-row>
+
                   <v-col cols="1"></v-col>
                 </v-col>
               </v-row>
@@ -258,6 +285,7 @@ export default {
       dateTime: new Date(),
       detail: "",
       itemType: "",
+      reward: false,
       pic: null,
       noticeId: "",
       defaultImage: null,
@@ -292,6 +320,7 @@ export default {
           (!!v && this.locationLat !== 0 && this.locationLong !== 0) ||
           "กรุณาเลือกสถานที่",
       ],
+      detailRules: [(v) => !!v || "กรุณากรอกรายละเอียด"],
     };
   },
   created() {
@@ -335,6 +364,7 @@ export default {
         this.locationLat,
         this.locationLong
       );
+      this.reward = notice.reward;
     },
     setShowDialog(isShow) {
       this.dialog.value = isShow;
@@ -402,6 +432,7 @@ export default {
           lat: this.locationLat,
           long: this.locationLong,
           pic: picture,
+          reward: this.reward,
         };
         console.log(notice);
 
@@ -496,6 +527,7 @@ export default {
       this.detail = "";
       this.pic = null;
       this.defaultImage = null;
+      this.reward = false;
     },
   },
 };

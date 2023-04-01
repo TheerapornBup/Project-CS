@@ -15,7 +15,7 @@
       rounded="md"
       :disabled="isReport"
     >
-      ส่งการยืนยันการคืนของ
+      ส่งการยืนยันการคืนของ{{ notice.reward ? "และรับค่าตอบแทน" : "" }}
       <v-dialog
         v-model="confirmDialog"
         persistent
@@ -34,25 +34,16 @@
               ></v-btn>
             </v-col>
           </v-row>
-          <v-card-title class="text-center"> ยืนยันการส่งคืนของ </v-card-title>
+          <v-card-title class="text-center">
+            ยืนยันการส่งคืนของ{{ notice.reward ? "และรับค่าตอบแทน" : "" }}
+          </v-card-title>
           <v-card-text
-            ><p>คุณต้องการยืนยันการส่งคืนของหรือไม่</p>
-            <v-checkbox
-              class="mt-3"
-              v-model="isReward"
-              density="compact"
-              color="mattBlue"
-            >
-              <template v-slot:label>
-                <div>
-                  ต้องการรับรางวัล ตาม
-                  <router-link to="/reward-law" target="_blank">
-                    กฎหมายการรับสินน้ำใจ
-                  </router-link>
-                </div>
-              </template>
-            </v-checkbox></v-card-text
-          >
+            ><p>
+              คุณต้องการยืนยันการส่งคืนของ{{
+                notice.reward ? "และรับค่าตอบแทน" : ""
+              }}หรือไม่
+            </p>
+          </v-card-text>
 
           <v-card-actions class="mt-5">
             <v-row>
@@ -417,7 +408,7 @@ export default {
         type: "success",
         content: "",
       },
-      isReward: false,
+
       moreMenu: false,
       issue: "",
       reportDialog: false,
@@ -487,24 +478,25 @@ export default {
         this.notice.userId === this.getUserId
           ? this.visitorId
           : this.notice.userId,
-        this.isReward
+        this.notice.reward
           ? "รอการยืนยันการรับส่งของและให้ค่าตอบแทน"
           : "รอการยืนยันการรับส่งของ"
       );
       this.confirmDialog = false;
-      this.isReward = false;
       this.dialog = {
         value: true,
         type: "success",
-        content: "ยืนยันการคืนของสำเร็จ",
+        content: this.notice.reward
+          ? "ยืนยันการคืนของสำเร็จและรับค่าตอบแทน"
+          : "ยืนยันการคืนของสำเร็จ",
       };
     },
     async confirmReceiveItem() {
       const text =
         this.receiveNotifyNotice.text ===
         "รอการยืนยันการรับส่งของและให้ค่าตอบแทน"
-          ? "ยืนยันการรับส่งของสำเร็จและให้ค่าตอบแทน"
-          : "ยืนยันการรับส่งของสำเร็จ";
+          ? "ยืนยันการรับของสำเร็จและให้ค่าตอบแทน"
+          : "ยืนยันการรับของสำเร็จ";
 
       await this.sendNotification(
         "confirm receipt",
@@ -610,11 +602,14 @@ export default {
     setShowDialog(isShow) {
       this.dialog.value = isShow;
       if (!isShow) {
-        if (this.dialog.content === "ยืนยันการคืนของสำเร็จ") {
+        if (
+          this.dialog.content === "ยืนยันการคืนของสำเร็จ" ||
+          this.dialog.content === "ยืนยันการคืนของสำเร็จและรับค่าตอบแทน"
+        ) {
           this.isSendNotifyNotice = true;
         } else if (
           this.dialog.content === "ยืนยันการรับของสำเร็จ" ||
-          this.dialog.content === "ยืนยันการรับส่งของสำเร็จและให้ค่าตอบแทน"
+          this.dialog.content === "ยืนยันการรับของสำเร็จและให้ค่าตอบแทน"
         ) {
           this.$emit("updateStatus", true);
         }
