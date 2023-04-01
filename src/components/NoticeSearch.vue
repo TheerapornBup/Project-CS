@@ -11,7 +11,7 @@
 
     <!-- show no notices -->
     <ShowNoData
-      v-else-if="notices.length === 0"
+      v-else-if="allNotices.length === 0"
       icon="mdi-file-search-outline"
       text="ไม่มีใบประกาศ"
     />
@@ -90,7 +90,7 @@
             <!-- select date time -->
             <v-col cols="2" class="py-0 date-input">
               <VueDatePicker
-              placeholder="ระบุวันเวลาที่ใกล้เคียง"
+                placeholder="ระบุวันเวลาที่ใกล้เคียง"
                 v-model="selectedDateTime"
                 :max-date="new Date()"
                 :clearable="false"
@@ -105,24 +105,32 @@
           </v-row>
         </v-card>
       </v-col>
+      <!-- show no search notices -->
+      <ShowNoData
+        v-if="notices.length === 0"
+        icon="mdi-file-search-outline"
+        text="ไม่มีใบประกาศตรงกับคำค้นหา"
+        class="align-self-start"
+      />
 
       <!-- notice card -->
-
-      <v-col
-        v-for="(notice, index) in notices"
-        :key="index"
-        cols="12"
-        lg="3"
-        md="4"
-        sm="6"
-      >
-        <NoticeCard
+      <v-row v-else>
+        <v-col
+          v-for="(notice, index) in notices"
           :key="index"
-          :notice="notice"
-          :showStatus="false"
-          @updateNotice="getNotices"
-        />
-      </v-col>
+          cols="12"
+          lg="3"
+          md="4"
+          sm="6"
+        >
+          <NoticeCard
+            :key="index"
+            :notice="notice"
+            :showStatus="false"
+            @updateNotice="getNotices"
+          />
+        </v-col>
+      </v-row>
     </v-row>
   </v-container>
 </template>
@@ -175,6 +183,7 @@ export default {
         "รองเท้า",
       ],
       notices: [],
+      allNotices: [],
       isLoading: false,
     };
   },
@@ -196,6 +205,7 @@ export default {
 
       this.isLoading = false;
       this.notices = noticesList;
+      this.allNotices = noticesList;
     },
     async checkNoticeExpire(noticesList) {
       noticesList.forEach(async (notice) => {
@@ -225,16 +235,7 @@ export default {
         }
       });
     },
-    compareByNoticeType(a, b) {
-      const typeA = this.selectedNoticeType === a.type;
-      const typeB = this.selectedNoticeType === b.type;
-      return typeB - typeA;
-    },
-    compareByItemType(a, b) {
-      const typeA = this.selectedItemType === a.itemType;
-      const typeB = this.selectedItemType === b.itemType;
-      return typeB - typeA;
-    },
+
     compareByLocation(a, b) {
       const distanceA = this.getDistanceBetweenPoints(
         this.locationLat,
@@ -279,18 +280,23 @@ export default {
       return Math.round(distance * 1.609344, 2);
     },
     search() {
-      let noticesList = this.notices;
+      let noticesList = this.allNotices;
+
+      if (this.selectedNoticeType !== null) {
+        noticesList = noticesList.filter(
+          (notice) => notice.type === this.selectedNoticeType
+        );
+      }
+      if (this.selectedItemType !== null) {
+        noticesList = noticesList.filter(
+          (notice) => notice.itemType === this.selectedItemType
+        );
+      }
       if (this.selectedDateTime !== null) {
         noticesList.sort(this.compareByDateTime);
       }
       if (this.selectedLocation !== null) {
         noticesList.sort(this.compareByLocation);
-      }
-      if (this.selectedNoticeType !== null) {
-        noticesList.sort(this.compareByNoticeType);
-      }
-      if (this.selectedItemType !== null) {
-        noticesList.sort(this.compareByItemType);
       }
 
       this.notices = noticesList;
