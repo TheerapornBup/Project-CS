@@ -201,17 +201,32 @@
                   >
                     <v-radio label="สแปม" value="สแปม"></v-radio>
                     <v-radio
-                      v-if="notice.type === 'ประกาศพบเจอของหาย'"
+                      v-if="
+                        (notice.type !== 'ประกาศพบเจอของหาย' &&
+                          getUserId !== notice.userId) ||
+                        (notice.type === 'ประกาศพบเจอของหาย' &&
+                          getUserId === notice.userId)
+                      "
                       label="ไม่ให้ค่าตอบแทนตามที่ตกลง"
                       value="ไม่ให้ค่าตอบแทนตามที่ตกลง"
                     ></v-radio>
                     <v-radio
-                      v-if="notice.type === 'ประกาศพบเจอของหาย'"
+                      v-if="
+                        (notice.type !== 'ประกาศพบเจอของหาย' &&
+                          getUserId !== notice.userId) ||
+                        (notice.type === 'ประกาศพบเจอของหาย' &&
+                          getUserId === notice.userId)
+                      "
                       label="ไม่ใช่เจ้าของของหาย"
                       value="ไม่ใช่เจ้าของของหาย"
                     ></v-radio>
                     <v-radio
-                      v-if="notice.type !== 'ประกาศพบเจอของหาย'"
+                      v-if="
+                        (notice.type !== 'ประกาศพบเจอของหาย' &&
+                          getUserId === notice.userId) ||
+                        (notice.type === 'ประกาศพบเจอของหาย' &&
+                          getUserId !== notice.userId)
+                      "
                       label="ไม่ได้ของคืน"
                       value="ไม่ได้ของคืน"
                     ></v-radio>
