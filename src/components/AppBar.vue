@@ -342,16 +342,24 @@ export default {
       return this.$store.getters["userId/getUserId"];
     },
   },
-  watch: {
-    getUserId: {
-      handler: function () {
-        if (this.getUserId != null) {
-          this.getUser();
-          this.getNotifications();
-        }
-      },
-      deep: true,
-    },
+  // watch: {
+  //   getUserId: {
+  //     handler: function () {
+  //       if (this.getUserId != null) {
+  //         this.getUser();
+  //         this.getNotifications();
+  //       }
+  //     },
+  //     deep: true,
+  //   },
+  // },
+  created() {
+    setInterval(() => {
+      if (this.getUserId != null) {
+        this.getUser();
+        this.getNotifications();
+      }
+    }, 3000);
   },
 };
 </script>
