@@ -28,8 +28,21 @@
   </v-card>
   <v-container>
     <v-row>
+      <v-col cols="12" class="pt-10" style="text-align: -webkit-center;">
+        <div class="successCase-card pt-3">
+          <h2>“ จำนวนเคสที่ปิดได้สำเร็จ ”</h2>
+          <div class="h3-th pt-3" style="text-align:center;">
+            ประกาศพบเจอของหาย {{ countFound }} เคส
+          </div>
+          <div class="h3-th pb-3" style="text-align:center;">
+            ประกาศตามหาของหาย {{ countFind }} เคส
+          </div>
+        </div>
+      </v-col>
+    </v-row>
+    <v-row>
       <!-- feature system -->
-      <v-col cols="12">
+      <v-col cols="12" class="pt-10">
         <h2>“ ฟังก์ชันการใช้งาน ”</h2>
       </v-col>
 
@@ -45,7 +58,7 @@
       </v-col>
 
       <!-- item type  -->
-      <v-col cols="12">
+      <v-col cols="12" class="pt-10">
         <h2>“ ประเภทสิ่งของ ”</h2>
       </v-col>
 
@@ -124,6 +137,9 @@
 </template>
 
 <script>
+import {
+  getNoticeCountFirebase
+} from "../services/firebases/notices";
 export default {
   name: "HomePage",
   data() {
@@ -237,8 +253,22 @@ export default {
           details: "ลูกบอล, ไม้เทนนิส, นกหวีด, นาฬิกาจับเวลา, กระบอกน้ำ ฯลฯ",
         },
       ],
+      countFind:0,
+      countFound:0
     };
   },
+  methods:{
+    async getSuccessFoundCase(){
+     this.countFound = await getNoticeCountFirebase("ประกาศพบเจอของหาย",true);
+    },
+    async getSuccessFindCase(){
+      this.countFind = await getNoticeCountFirebase("ประกาศตามหาของหาย",true);
+    },
+  },
+  created(){
+    this.getSuccessFoundCase();
+    this.getSuccessFindCase();
+  }
 };
 </script>
 
@@ -288,6 +318,14 @@ h3 {
   height: 210px;
   border-radius: 20px;
   box-shadow: 0px 8px 16px 5px rgba(0, 0, 0, 0.25);
+}
+
+.successCase-card {
+  width: 700px;
+  height: auto;
+  border-radius: 20px;
+  box-shadow: 0px 8px 16px 5px rgba(0, 0, 0, 0.25);
+  background-color: #D8AC84;
 }
 .process-card {
   width: 350px;
