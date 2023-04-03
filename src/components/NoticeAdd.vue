@@ -99,6 +99,7 @@
                       'หนังสือ',
                       'อุปกรณ์ทางการแพทย์',
                       'รองเท้า',
+                      'อื่นๆ'
                     ]"
                     :rules="itemTypeRules"
                   ></v-select>
@@ -291,6 +292,7 @@ export default {
         หนังสือ: "book-default.jpg",
         อุปกรณ์ทางการแพทย์: "medical-default.jpg",
         รองเท้า: "shoes-default.jpg",
+        อื่นๆ:"other-default.jpg"
       },
 
       dialog: {
