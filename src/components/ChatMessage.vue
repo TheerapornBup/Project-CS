@@ -30,19 +30,45 @@
                 icon="mdi-close"
                 class="float-end d-inline"
                 flat
-                @click="confirmDialog = false"
+                @click="closeConfirmDialog()"
               ></v-btn>
             </v-col>
           </v-row>
           <v-card-title class="text-center">
             ยืนยันการส่งคืนของ{{ notice.reward ? "และรับค่าตอบแทน" : "" }}
           </v-card-title>
-          <v-card-text
+          <v-card-text class="text-center"
             ><p>
               คุณต้องการยืนยันการส่งคืนของ{{
                 notice.reward ? "และรับค่าตอบแทน" : ""
               }}หรือไม่
             </p>
+            <!-- ID Card image field -->
+            <div class="mt-2 d-flex flex-column justify-center align-center">
+              <template v-if="preview">
+                <img :src="preview" style="height: 200px" />
+              </template>
+              <div
+                v-else
+                class="border d-flex"
+                style="width: 80%; height: 200px"
+              >
+                <p
+                  class="h4-th ma-auto text-center"
+                  :class="imageError ? 'text-error' : 'text-black'"
+                >
+                  กรุณาใส่รูปภาพบัตรประชาชนของอีกฝ่าย
+                </p>
+              </div>
+              <input
+                type="file"
+                accept="image/*"
+                @change="previewImage"
+                class="form-control-file h4-th mt-2"
+                id="my-file"
+                style="width: 80%"
+              />
+            </div>
           </v-card-text>
 
           <v-card-actions class="mt-5">
@@ -62,7 +88,7 @@
                   variant="outlined"
                   rounded="pill"
                   block
-                  @click="confirmDialog = false"
+                  @click="closeConfirmDialog()"
                 >
                   ยกเลิก
                 </v-btn>
@@ -99,7 +125,7 @@
                 icon="mdi-close"
                 class="float-end d-inline"
                 flat
-                @click="confirmDialog = false"
+                @click="closeConfirmDialog()"
               ></v-btn>
             </v-col>
           </v-row>
@@ -111,14 +137,42 @@
                 : ""
             }}
           </v-card-title>
-          <v-card-text
-            >คุณต้องการยืนยันการรับของ{{
-              receiveNotifyNotice.text ===
-              "รอการยืนยันการรับส่งของและให้ค่าตอบแทน"
-                ? "และให้ค่าตอบแทน"
-                : ""
-            }}หรือไม่</v-card-text
-          >
+          <v-card-text class="text-center"
+            ><p>
+              คุณต้องการยืนยันการรับของ{{
+                receiveNotifyNotice.text ===
+                "รอการยืนยันการรับส่งของและให้ค่าตอบแทน"
+                  ? "และให้ค่าตอบแทน"
+                  : ""
+              }}หรือไม่
+            </p>
+            <!-- ID Card image field -->
+            <div class="d-flex flex-column justify-center align-center">
+              <template v-if="preview">
+                <img :src="preview" style="height: 200px" />
+              </template>
+              <div
+                v-else
+                class="border d-flex"
+                style="width: 80%; height: 200px"
+              >
+                <p
+                  class="h4-th ma-auto text-center"
+                  :class="imageError ? 'text-error' : 'text-black'"
+                >
+                  กรุณาใส่รูปภาพบัตรประชาชนของอีกฝ่าย
+                </p>
+              </div>
+              <input
+                type="file"
+                accept="image/*"
+                @change="previewImage"
+                class="form-control-file h4-th mt-2"
+                id="my-file"
+                style="width: 80%"
+              />
+            </div>
+          </v-card-text>
 
           <v-card-actions class="mt-5">
             <v-row>
@@ -137,7 +191,7 @@
                   variant="outlined"
                   rounded="pill"
                   block
-                  @click="confirmDialog = false"
+                  @click="closeConfirmDialog"
                 >
                   ยกเลิก
                 </v-btn>
@@ -386,6 +440,12 @@ import {
   getMatchNotificationFirebase,
   updateNotificationFirebase,
 } from "../services/firebases/notifications";
+import {
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytes,
+} from "@firebase/storage";
 
 export default {
   name: "ChatMessage",
@@ -428,6 +488,11 @@ export default {
       issue: "",
       reportDialog: false,
       isReport: false,
+
+      preview: null,
+      image: null,
+      pathpic: "",
+      imageError: false,
     };
   },
   methods: {
@@ -486,51 +551,83 @@ export default {
         return this.getDate(timestamp);
       }
     },
-    async confirmSendItem() {
-      await this.sendNotification(
-        "wait confirm receipt",
-        this.chatId,
+
+    async uploadIdCard() {
+      this.pathpic =
         this.notice.userId === this.getUserId
-          ? this.visitorId
-          : this.notice.userId,
-        this.notice.reward
-          ? "รอการยืนยันการรับส่งของและให้ค่าตอบแทน"
-          : "รอการยืนยันการรับส่งของ"
-      );
-      this.confirmDialog = false;
-      this.dialog = {
-        value: true,
-        type: "success",
-        content: this.notice.reward
-          ? "ยืนยันการคืนของสำเร็จและรับค่าตอบแทน"
-          : "ยืนยันการคืนของสำเร็จ",
-      };
+          ? `${this.notice.noticeId}/idCardVistor.jpg`
+          : `${this.notice.noticeId}/idCardUser.jpg`;
+      await this.uploadPic();
+
+      const picture = await this.downloadPic();
+      const idCard =
+        this.notice.userId === this.getUserId
+          ? {
+              idCardVistor: picture,
+            }
+          : {
+              idCardUser: picture,
+            };
+      await updateNoticeFirebase(this.notice.noticeId, idCard);
+    },
+
+    async confirmSendItem() {
+      if (this.image === null) {
+        this.imageError = true;
+      } else {
+        await this.uploadIdCard();
+
+        await this.sendNotification(
+          "wait confirm receipt",
+          this.chatId,
+          this.notice.userId === this.getUserId
+            ? this.visitorId
+            : this.notice.userId,
+          this.notice.reward
+            ? "รอการยืนยันการรับส่งของและให้ค่าตอบแทน"
+            : "รอการยืนยันการรับส่งของ"
+        );
+        this.closeConfirmDialog();
+        this.dialog = {
+          value: true,
+          type: "success",
+          content: this.notice.reward
+            ? "ยืนยันการคืนของสำเร็จและรับค่าตอบแทน"
+            : "ยืนยันการคืนของสำเร็จ",
+        };
+      }
     },
     async confirmReceiveItem() {
-      const text =
-        this.receiveNotifyNotice.text ===
-        "รอการยืนยันการรับส่งของและให้ค่าตอบแทน"
-          ? "ยืนยันการรับของสำเร็จและให้ค่าตอบแทน"
-          : "ยืนยันการรับของสำเร็จ";
+      if (this.image === null) {
+        this.imageError = true;
+      } else {
+        await this.uploadIdCard();
 
-      await this.sendNotification(
-        "confirm receipt",
-        this.chatId,
-        this.notice.userId === this.getUserId
-          ? this.visitorId
-          : this.notice.userId,
-        text
-      );
+        const text =
+          this.receiveNotifyNotice.text ===
+          "รอการยืนยันการรับส่งของและให้ค่าตอบแทน"
+            ? "ยืนยันการรับของสำเร็จและให้ค่าตอบแทน"
+            : "ยืนยันการรับของสำเร็จ";
 
-      await updateNoticeFirebase(this.notice.noticeId, { status: true });
+        await this.sendNotification(
+          "confirm receipt",
+          this.chatId,
+          this.notice.userId === this.getUserId
+            ? this.visitorId
+            : this.notice.userId,
+          text
+        );
 
-      this.confirmDialog = false;
+        await updateNoticeFirebase(this.notice.noticeId, { status: true });
 
-      this.dialog = {
-        value: true,
-        type: "success",
-        content: text,
-      };
+        this.closeConfirmDialog();
+
+        this.dialog = {
+          value: true,
+          type: "success",
+          content: text,
+        };
+      }
     },
     async confirmReportUser() {
       const { valid } = await this.$refs.form.validate();
@@ -637,6 +734,50 @@ export default {
       await this.getIsSendNotifyNotice();
       await this.getIsReceiveNotifyNotice();
       this.isLoading = false;
+    },
+
+    resetImageField() {
+      this.preview = null;
+      this.image = null;
+      this.pathpic = "";
+      this.imageError = false;
+    },
+
+    closeConfirmDialog() {
+      this.confirmDialog = false;
+      this.resetImageField();
+    },
+
+    async downloadPic() {
+      const storage = getStorage();
+      const starsRef = ref(storage, this.pathpic);
+      let url = null;
+      url = await getDownloadURL(starsRef);
+      // Get the download URL
+      return url;
+    },
+    async uploadPic() {
+      const storage = getStorage();
+      const storageRef = ref(storage, this.pathpic);
+
+      // 'file' comes from the Blob or File API
+      await uploadBytes(storageRef, this.image).then(() => {
+        console.log("Uploaded a blob or file!");
+      });
+    },
+
+    // About 'Preview Picture'
+    previewImage: function (event) {
+      var input = event.target;
+      if (input.files) {
+        var reader = new FileReader();
+        reader.onload = (e) => {
+          this.preview = e.target.result;
+        };
+        this.image = input.files[0];
+        reader.readAsDataURL(input.files[0]);
+        console.log("Here File : " + this.image);
+      }
     },
   },
   computed: {

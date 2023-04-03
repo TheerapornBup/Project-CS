@@ -281,8 +281,6 @@ export default {
 
       preview: null,
       image: null,
-      preview_list: [],
-      image_list: [],
       pathpic: "",
 
       dateTime: new Date(),
@@ -427,7 +425,7 @@ export default {
           this.pathpic = this.defaultImage;
           picture = await this.downloadPic();
         } else if (this.image !== null && this.type === "ประกาศตามหาของหาย") {
-          this.pathpic = this.noticeId + ".jpg";
+          this.pathpic = `${this.noticeId}/pic.jpg`;
           await this.uploadPic();
           picture = await this.downloadPic();
         }
@@ -503,27 +501,10 @@ export default {
         console.log("Here File : " + this.image);
       }
     },
-    previewMultiImage: function (event) {
-      var input = event.target;
-      var count = input.files.length;
-      var index = 0;
-      if (input.files) {
-        while (count--) {
-          var reader = new FileReader();
-          reader.onload = (e) => {
-            this.preview_list.push(e.target.result);
-          };
-          this.image_list.push(input.files[index]);
-          reader.readAsDataURL(input.files[index]);
-          index++;
-        }
-      }
-    },
+
     reset: function () {
       this.image = null;
       this.preview = null;
-      this.image_list = [];
-      this.preview_list = [];
 
       this.type = "ประกาศตามหาของหาย";
       this.mapCard = false;

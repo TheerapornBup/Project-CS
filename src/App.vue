@@ -64,8 +64,8 @@ export default {
   cursor: pointer;
 }
 
-.add-notice-box{
-  background: #EAE7E6;
+.add-notice-box {
+  background: #eae7e6;
   border-radius: 100px;
   width: 850px;
   height: 400px;
@@ -109,7 +109,7 @@ export default {
 .dp__input {
   border-radius: 40px !important;
   height: 45px !important;
-  font-family: 'Noto Serif Thai' !important;
+  font-family: "Noto Serif Thai" !important;
 }
 
 .dp__input_icon {
@@ -153,7 +153,6 @@ export default {
 
 input[type="file"] {
   width: 30%;
-  max-width: 30%;
   color: #444;
   background: #f1f1f1;
   border-radius: 8px;

@@ -21,16 +21,21 @@ async function deleteMessageAndNotification(chatsList) {
 }
 
 export async function deleteNoticeById(noticeId) {
-  try {
-    let chatsList = await getChatByNoticeIdFirebase(noticeId);
-    await deleteMessageAndNotification(chatsList);
-    await deleteNotificationByItemIdFirebase(noticeId);
-    await deleteChatByNoticeIdFirebase(noticeId);
-    await deleteNoticeFirebase(noticeId);
+  let chatsList = await getChatByNoticeIdFirebase(noticeId);
+  await deleteMessageAndNotification(chatsList);
+  await deleteNotificationByItemIdFirebase(noticeId);
+  await deleteChatByNoticeIdFirebase(noticeId);
+  await deleteNoticeFirebase(noticeId);
 
+  await deleteImage(`${noticeId}/pic.jpg`);
+  await deleteImage(`${noticeId}/idCardVistor.jpg`);
+  await deleteImage(`${noticeId}/idCardUser.jpg`);
+}
+
+async function deleteImage(path) {
+  try {
     const storage = getStorage();
-    const desertRef = ref(storage, `${noticeId}.jpg`);
-    await deleteObject(desertRef);
+    await deleteObject(ref(storage, path));
   } catch (e) {
     console.log(e.message);
   }
