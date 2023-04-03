@@ -92,9 +92,10 @@
               <VueDatePicker
                 placeholder="ระบุวันเวลาที่ใกล้เคียง"
                 v-model="selectedDateTime"
+                :min-date="getMinDateTime()"
                 :max-date="new Date()"
                 :clearable="false"
-                :format="'dd/MM/yyyy'"
+                format="dd/MM/yyyy HH:mm"
               ></VueDatePicker>
             </v-col>
             <!-- search button -->
@@ -182,7 +183,7 @@ export default {
         "หนังสือ",
         "อุปกรณ์ทางการแพทย์",
         "รองเท้า",
-        "อื่นๆ"
+        "อื่นๆ",
       ],
       notices: [],
       allNotices: [],
@@ -190,6 +191,10 @@ export default {
     };
   },
   methods: {
+    getMinDateTime() {
+      const date = new Date();
+      return date.setFullYear(date.getFullYear() - 3);
+    },
     async getNotices() {
       let noticesList = [];
       this.isLoading = true;

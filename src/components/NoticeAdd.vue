@@ -99,7 +99,7 @@
                       'หนังสือ',
                       'อุปกรณ์ทางการแพทย์',
                       'รองเท้า',
-                      'อื่นๆ'
+                      'อื่นๆ',
                     ]"
                     :rules="itemTypeRules"
                   ></v-select>
@@ -176,9 +176,10 @@
                         class="mt-3"
                         variant="solo"
                         density="compact"
+                        :min-date="getMinDateTime()"
                         :max-date="new Date()"
                         :clearable="false"
-                        :format="'dd/MM/yyyy'"
+                        format="dd/MM/yyyy HH:mm"
                         style="width: 230px"
                       ></VueDatePicker>
                     </v-col>
@@ -292,7 +293,7 @@ export default {
         หนังสือ: "book-default.jpg",
         อุปกรณ์ทางการแพทย์: "medical-default.jpg",
         รองเท้า: "shoes-default.jpg",
-        อื่นๆ:"other-default.jpg"
+        อื่นๆ: "other-default.jpg",
       },
 
       dialog: {
@@ -328,6 +329,10 @@ export default {
     },
   },
   methods: {
+    getMinDateTime() {
+      const date = new Date();
+      return date.setFullYear(date.getFullYear() - 3);
+    },
     setShowDialog(isShow) {
       this.dialog.value = isShow;
       if (!isShow) {

@@ -114,7 +114,7 @@
                       'หนังสือ',
                       'อุปกรณ์ทางการแพทย์',
                       'รองเท้า',
-                      'อื่นๆ'
+                      'อื่นๆ',
                     ]"
                   ></v-select>
                 </v-col>
@@ -189,7 +189,8 @@
                         v-model="dateTime"
                         class="mt-3"
                         variant="solo"
-                        :format="'dd/MM/yyyy'"
+                        format="dd/MM/yyyy HH:mm"
+                        :min-date="getMinDateTime()"
                         :max-date="new Date()"
                         :clearable="false"
                         style="width: 230px"
@@ -308,7 +309,7 @@ export default {
         หนังสือ: "book-default.jpg",
         อุปกรณ์ทางการแพทย์: "medical-default.jpg",
         รองเท้า: "shoes-default.jpg",
-        อื่นๆ:"other-default.jpg"
+        อื่นๆ: "other-default.jpg",
       },
 
       dialog: {
@@ -353,6 +354,10 @@ export default {
     },
   },
   methods: {
+    getMinDateTime() {
+      const date = new Date();
+      return date.setFullYear(date.getFullYear() - 3);
+    },
     async getNotice() {
       const notice = await getNoticeByIdFirebase(this.noticeId);
 
