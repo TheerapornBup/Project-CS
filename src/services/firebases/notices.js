@@ -9,6 +9,7 @@ import {
   query,
   where,
   orderBy,
+  getCountFromServer
 } from "firebase/firestore";
 import db from "../../firebase";
 
@@ -32,6 +33,17 @@ export async function getNoticeByIdFirebase(id) {
   const notice = await getDoc(noticeRef);
   const noticeData = notice.data();
   return { ...noticeData, noticeId: notice.id };
+}
+
+export async function getNoticeCountFirebase(type,status) {
+  const q = query(
+    noticesColRef, 
+    where("type", "==", type),
+    where("status", "==", status)
+    );
+  const noticesSnapshot = await getCountFromServer(q);
+
+  return noticesSnapshot.data().count;
 }
 
 export async function getNoticesFirebase() {
