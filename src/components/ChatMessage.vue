@@ -555,7 +555,7 @@ export default {
     async uploadIdCard() {
       this.pathpic =
         this.notice.userId === this.getUserId
-          ? `${this.notice.noticeId}/idCardVistor.jpg`
+          ? `${this.notice.noticeId}/idCardVisitor.jpg`
           : `${this.notice.noticeId}/idCardUser.jpg`;
       await this.uploadPic();
 
@@ -563,7 +563,7 @@ export default {
       const idCard =
         this.notice.userId === this.getUserId
           ? {
-              idCardVistor: picture,
+              idCardVisitor: picture,
             }
           : {
               idCardUser: picture,

@@ -28,7 +28,7 @@ export async function deleteNoticeById(noticeId) {
   await deleteNoticeFirebase(noticeId);
 
   await deleteImage(`${noticeId}/pic.jpg`);
-  await deleteImage(`${noticeId}/idCardVistor.jpg`);
+  await deleteImage(`${noticeId}/idCardVisitor.jpg`);
   await deleteImage(`${noticeId}/idCardUser.jpg`);
 }
 
